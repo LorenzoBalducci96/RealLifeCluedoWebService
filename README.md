@@ -11,3 +11,5 @@ Once a user succesfull the login, if is on a session he will be able to select t
 Once a user succesfully touched his user target with the required object in the required place, he will earn points depending on the mission difficult that had (100 points * place_multiplicator * object_multiplicator).
 It's obvious that the more a place/object is hard to reach/use, the higher is the multiplicator (usually between 0.5 and 2).
 After that, the user gets another mission.
+
+widgets page of the adminLTE template is used both for the admin page and for the user page.
