@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Campus murder</title>
+<!-- Tell the browser to be responsive to screen width -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Font Awesome -->
+<link rel="stylesheet"
+	href="plugins/fontawesome-free-5.11.2-web/css/all.min.css">
+
+<!-- Tempusdominus Bbootstrap 4 -->
+<link rel="stylesheet"
+	href="plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+<!-- iCheck -->
+<link rel="stylesheet"
+	href="plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+
+<!-- Theme style -->
+<link rel="stylesheet" href="dist/css/adminlte.min.css">
+<link rel="stylesheet" href="dist/css/slider.css">
+<link rel="stylesheet" href="dist/css/rounded_range.css">
+<link rel="stylesheet" href="dist/css/table.css">
+<link rel="stylesheet" href="dist/css/images_bhestia.css">
+<link rel="stylesheet" href="dist/css/scrollbars.css">
+<link rel="stylesheet" href="dist/css/general.css">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	href="plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+
+<!-- Google Font: Source Sans Pro -->
+<link
+	href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700"
+	rel="stylesheet">
+
+
+</head>
+<body style="background-color: black;" class="hold-transition sidebar-mini layout-fixed" >
+	<div class="modal fade" id="loginModal" tabindex="-1" role="dialog"
+		data-backdrop="static" data-keyboard="false"
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="container">
+					<h2>Administrator login</h2>
+					<div class="row">
+
+						<div class="col-2"></div>
+						<div class="col-8">
+							<div class="form-group">
+								<input type="text" value="user: administrator" readonly
+									style="color: rgb(0, 0, 0); width: 100%; box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075) !important; border-radius: .25rem !important" />
+							</div>
+
+							<div class="form-group">
+								<input id="administrator_password" class="form-control"
+									style="width: 92%;" type="password" name="password"
+									placeholder="Password">
+							</div>
+
+							<div class="form-group">
+								<button class="btn bg-info btn-sm" style="width: 100%;"
+									onclick="login()">Log In</button>
+							</div>
+						</div>
+
+					</div>
+					<a class="forgot" href="#">use this page for administration
+						purpose only users should use index.html</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="user_modal"
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="container">
+					<h2 id="opened_user_name"></h2>
+					<div class="row">
+
+						<div class="col-2"></div>
+						<div class="col-8">
+							<label>what do you want to do with this profile?</label>
+							<label>if you are adding this person after the session is started, you can let him start with some points</label><input type="number" id="starting_user_points" min="0" max="10000" step="100" value="0">
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn bg-danger btn-sm" style="width: 100%;"
+							data-dismiss="modal" onclick="deleteUser()">delete user (warning!!)
+							</button>
+						<button class="btn bg-info btn-sm" style="width: 100%;"
+							data-dismiss="modal" onclick="addUserOnSession()">add user to session</button>
+						<button class="btn bg-success btn-sm" style="width: 100%;"
+							data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="session_modal"
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="container">
+					<h2 id="opened_session_name"></h2>
+					<div class="row">
+
+						<div class="col-2"></div>
+						<div class="col-8">
+							<label>description: </label> <label
+								id="opened_session_description"></label> <br /> <label>start
+								date: </label> <label id="opened_session_start_date"></label> <br /> <label>end
+								date: </label> <label id="opened_session_end_date"></label>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn bg-danger btn-sm" style="width: 100%;"
+							data-dismiss="modal" onclick="deleteSession()">cancel
+							session</button>
+						<button class="btn bg-info btn-sm" style="width: 100%;"
+							data-dismiss="modal" onclick="useThisSession()">Select
+							this session</button>
+						<button class="btn bg-success btn-sm" style="width: 100%;"
+							data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="object_modal"
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="container">
+					<h2 id="opened_object_name"></h2>
+					<div class="row">
+
+						<div class="col-2"></div>
+						<div class="col-8">
+							<label>description: </label> <label
+								id="opened_object_description"></label> <br /> <label>multiplicator:
+							</label> <label id="opened_object_multiplicator"></label> <br />
+
+
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn bg-danger btn-sm" style="width: 100%;"
+							data-dismiss="modal" onclick="deleteObject()">cancel
+							object</button>
+						<button class="btn bg-info btn-sm" style="width: 100%;"
+							data-dismiss="modal" onclick="addObjectOnSession()">add
+							to session</button>
+						<button class="btn bg-success btn-sm" style="width: 100%;"
+							data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="place_modal"
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="container">
+					<h2 id="opened_place_name"></h2>
+					<div class="row">
+
+						<div class="col-2"></div>
+						<div class="col-8">
+							<label>description: </label> <label id="opened_place_description"></label>
+							<br /> <label>multiplicator: </label> <label
+								id="opened_place_multiplicator"></label> <br />
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn bg-danger btn-sm" style="width: 100%;"
+							data-dismiss="modal" onclick="deletePlace()">cancel
+							place</button>
+						<button class="btn bg-info btn-sm" style="width: 100%;"
+							data-dismiss="modal" onclick="addPlaceOnSession()">add
+							to session</button>
+						<button class="btn bg-success btn-sm" style="width: 100%;"
+							data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="new_session_modal" 
+	aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="container">
+					<h2>New session</h2>
+					<div class="row">
+						<div class="col-2" style="text-align: right;"></div>
+						<div class="col-8">
+							<div class="form-group">
+								<input id="new_session_name" class="form-control" type="text"
+									name="session_name" placeholder="session name">
+							</div>
+
+							<div class="form-group">
+								<input id="new_session_description" class="form-control"
+									type="text" name="new_session_description"
+									placeholder="description">
+							</div>
+
+
+							<div class="form-group">
+								<div class="input-group date" data-target-input="nearest">
+									<input type="text" class="form-control datetimepicker-input"
+										id="new_session_start_date"
+										data-target="#new_session_start_date"
+										placeholder="starting date (today?)" />
+									<div class="input-group-append"
+										data-target="#new_session_start_date"
+										data-toggle="datetimepicker">
+										<div class="input-group-text">
+											<i class="fa fa-calendar"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<div class="input-group date" data-target-input="nearest">
+									<input type="text" class="form-control datetimepicker-input"
+										id="new_session_end_date" data-target="#new_session_end_date"
+										placeholder="ending date (2 weeks after today?)" />
+									<div class="input-group-append"
+										data-target="#new_session_end_date"
+										data-toggle="datetimepicker">
+										<div class="input-group-text">
+											<i class="fa fa-calendar"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="form-group">
+								<button class="btn bg-info btn-sm" style="width: 100%;"
+									data-dismiss="modal" onclick="createSession()">create
+									session</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="new_user_modal" 
+	aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="container">
+					<h2>New user direct registration</h2>
+					<div class="row">
+							<label style="margin: 2px;">you are going to insert a new user to the database, 
+									you are the administrator (don't you?) so no email verification is required for this user, 
+								the user will be directly inserted in the database with the choosen username and password</label>
+						<div class="col-2" style="text-align: right;"></div>
+						<div class="col-8">
+							
+							<div class="form-group">
+								<input id="new_user_name" class="form-control" type="text"
+									placeholder="new user username">
+							</div>
+
+							<div class="form-group">
+									<input id="new_user_password" class="form-control" type="password"
+										name="new_user_password" placeholder="password">
+							</div>
+
+							<div class="form-group">
+									<div class="custom-file">
+										<input type="file" class="custom-file-input" id="new_user_image">
+										<label class="custom-file-label"
+											style="height: auto !important;" for="new_user_image">Choose image profile</label>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<button class="btn bg-info btn-sm" style="width: 100%;"
+									data-dismiss="modal" onclick="createUser()">create
+									user</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="new_object_modal" 
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="container">
+					<h2>New object</h2>
+					<div class="row">
+						<div class="col-2" style="text-align: right;"></div>
+						<div class="col-8">
+							<div class="form-group">
+								<input id="new_object_name" class="form-control" type="text"
+									name="object_name" placeholder="object name">
+							</div>
+
+							<div class="form-group">
+								<input id="new_object_description" class="form-control"
+									type="text" name="new_object_description"
+									placeholder="description">
+							</div>
+
+							<div class="form-group">
+								<div class="custom-file">
+									<input type="file" class="custom-file-input" id="object_image">
+									<label class="custom-file-label"
+										style="height: auto !important;" for="object_image">Choose
+										file (jpg jpeg png)</label>
+								</div>
+							</div>
+
+
+
+							<div class="form-group">
+								<label style="width: 20%">bonus :</label> <input
+									style="width: 60%" class="rounded_range" type="range" max="2.0"
+									min="0.5" step="0.1" value="1.0" id="new_object_multiplicator"
+									oninput="showNewRangeVal('new_object_rangeVal', this.value)"
+									onchange="showNewRangeVal('new_object_rangeVal', this.value)"></input>
+
+								<label style="width: 10%; margin-left: 2px;"
+									id="new_object_rangeVal">1.0</label>
+
+							</div>
+
+
+							<div class="form-group">
+								<button class="btn bg-info btn-sm" style="width: 100%;"
+									data-dismiss="modal" onclick="createObject()">create
+									object</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="new_place_modal" 
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="container">
+					<h2>New place</h2>
+					<div class="row">
+						<div class="col-2" style="text-align: right;"></div>
+						<div class="col-8">
+							<div class="form-group">
+								<input id="new_place_name" class="form-control" type="text"
+									name="place_name" placeholder="place name">
+							</div>
+
+							<div class="form-group">
+								<input id="new_place_description" class="form-control"
+									type="text" name="new_place_description"
+									placeholder="description">
+							</div>
+
+							<div class="form-group">
+								<div class="custom-file">
+									<input type="file" class="custom-file-input" id="place_image">
+									<label class="custom-file-label"
+										style="height: auto !important;" for="place_image">Choose
+										file (jpg jpeg png)</label>
+								</div>
+							</div>
+
+
+
+							<div class="form-group">
+								<label style="width: 20%">bonus :</label> <input
+									style="width: 60%" class="rounded_range" type="range" max="2.0"
+									min="0.5" step="0.1" value="1.0" id="new_place_multiplicator"
+									oninput="showNewRangeVal('new_place_rangeVal', this.value)"
+									onchange="showNewRangeVal('new_place_rangeVal', this.value)"></input>
+
+								<label style="width: 10%; margin-left: 2px;"
+									id="new_place_rangeVal">1.0</label>
+
+							</div>
+
+
+							<div class="form-group">
+								<button class="btn bg-info btn-sm" style="width: 100%;"
+									data-dismiss="modal" onclick="createPlace()">create
+									object</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="remove_object_from_session_modal"
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="container">
+					<label>do you want to remove :</label>
+					<label id="removing_object_from_session_name"></label>
+					<div class="modal-footer">
+						<button class="btn bg-danger btn-sm" style="width: 100%;"
+						data-dismiss="modal" onclick="removeObjectFromSession()">remove</button>
+						<button class="btn bg-success btn-sm" style="width: 100%;"
+							data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="remove_place_from_session_modal"
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="container">
+					<label>do you want to remove :</label>
+					<label id="removing_place_from_session_name"></label>
+					<div class="modal-footer">
+						<button class="btn bg-danger btn-sm" style="width: 100%;"
+						data-dismiss="modal" onclick="removePlaceFromSession()">remove</button>
+						<button class="btn bg-success btn-sm" style="width: 100%;"
+							data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="remove_user_from_session_modal"
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="container">
+					<label>do you want to remove :</label>
+					<label id="removing_user_from_session_name"></label>
+					<div class="modal-footer">
+						<button class="btn bg-danger btn-sm" style="width: 100%;"
+						data-dismiss="modal" onclick="removeUserFromSession()">remove</button>
+						<button class="btn bg-success btn-sm" style="width: 100%;"
+							data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+	<!--
+	---start of the page
+	---
+	---
+	-->
+
+	<div class="wrapper">
+
+		<!-- Navbar -->
+		<nav class="navbar navbar-expand">
+			<!-- Left navbar links -->
+			<ul class="navbar-nav">
+				<!--here elements floating left-->
+				<button style="margin: 8px;" type="button"
+					onclick="decreaseDimension()" class="btn bg-info btn-sm"
+					data-card-widget="collapse">
+					<i class="fas fa-minus"></i>
+				</button>
+				<button style="margin: 8px;" type="button"
+					onclick="increaseDimension()" class="btn bg-info btn-sm"
+					data-card-widget="remove">
+					<i class="fas fa-plus"></i>
+				</button>
+				
+					<label id="selected_session_text" style="margin-top: 8px; margin-left: 8px;" class="text-light">No session selected</label>
+				
+			</ul>
+			<ul class="navbar-nav ml-auto">
+					<button id="start_session_button" type="button" style="display: none;"
+					onclick="startSession()" class="btn bg-info btn-sm">assign missions to players</button>
+			</ul>
+		</nav>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div>
+			<!-- Main content -->
+			<section class="content">
+				<div class="container-fluid">
+					<!-- Main row -->
+					<div class="row">
+				
+						<section id="first_column"
+							class="col-lg-3 col-md-3 col-sm-6 connectedSortable">
+							<div class="card bg-gradient-info">
+								<div class="card-header border-0">
+									<h3 class="card-title">
+										<i class="fas fa-th mr-1"></i> Sessions
+									</h3>
+
+									<div class="card-tools">
+										<button type="button" class="btn bg-info btn-sm"
+											data-card-widget="collapse">
+											<i class="fas fa-minus"></i>
+										</button>
+										<button type="button" class="btn bg-info btn-sm"
+											data-card-widget="remove">
+											<i class="fas fa-times"></i>
+										</button>
+									</div>
+								</div>
+								<div class="card-body pt-0" id="sessions_widget">
+									<div style="width: 100%; height: 100%; overflow: auto;">
+										<table class="table" cellspacing="0" cellpadding="1"
+											width="100%" id="allSessionsTable">
+											<tbody>
+											</tbody>
+										</table>
+									</div>
+								</div>
+								<div class="card-footer">
+									<button type="button" class="btn bg-info" id="new Session"
+										data-toggle="modal" data-target="#new_session_modal">new
+										session</button>
+								</div>
+								<!-- /.card-footer -->
+							</div>
+
+						</section>
+
+						<section id="second_column"
+							class="col-lg-3 col-md-3 col-sm-6 connectedSortable">
+
+							<div class="card bg-gradient-success">
+								<div class="card-header border-0">
+									<h3 class="card-title">
+										<i class="fas fa-th mr-1"></i> Users
+									</h3>
+
+									<div class="card-tools">
+										<button type="button" class="btn bg-success btn-sm"
+											data-card-widget="collapse">
+											<i class="fas fa-minus"></i>
+										</button>
+										<button type="button" class="btn bg-success btn-sm"
+											onclick="retriveUsers()">
+											<i class="fa fa-sync" aria-hidden="true"></i>
+										</button>
+									</div>
+								</div>
+								<div class="card-body">
+
+									<div class="funny_scrollbar_green" id="profile_images"
+										style="width: 100%; max-height: 11rem; overflow: auto; display: flex; justify-content: center; flex-wrap: wrap; position: relative; text-align: center;">
+									</div>
+
+								</div>
+								<div class="card-footer">
+									<button type="button" class="btn bg-success"
+										data-toggle="modal" data-target="#new_user_modal">new user</button>
+								</div>
+							</div>
+
+							<div class="card bg-gradient-success">
+								<div class="card-header border-0">
+									<h3 class="card-title">
+										<i class="fas fa-th mr-1"></i>Session users
+									</h3>
+
+									<div class="card-tools">
+										<button type="button" class="btn bg-success btn-sm"
+											data-card-widget="collapse">
+											<i class="fas fa-minus"></i>
+										</button>
+										<button type="button" class="btn bg-success btn-sm"
+											onclick="retriveSessionUsers()">
+											<i class="fa fa-sync" aria-hidden="true"></i>
+										</button>
+									</div>
+								</div>
+								<div class="card-body">
+
+									<div class="funny_scrollbar" id="session_profile_images"
+										style="width: 100%; max-height: 11rem; overflow: auto; display: flex; justify-content: center; flex-wrap: wrap; position: relative; text-align: center;">
+									</div>
+
+								</div>
+							</div>
+
+						</section>
+
+						<section id="third_column"
+							class="col-lg-3 col-md-3 col-sm-6 connectedSortable">
+
+							<div class="card bg-gradient-warning">
+								<div class="card-header border-0">
+									<h3 class="card-title">
+										<i class="fas fa-th mr-1"></i> Places
+									</h3>
+
+									<div class="card-tools">
+										<button type="button" class="btn bg-warning btn-sm"
+											data-card-widget="collapse">
+											<i class="fas fa-minus"></i>
+										</button>
+										<button type="button" class="btn bg-warning btn-sm"
+											onclick="retrivePlaces()">
+											<i class="fa fa-sync" aria-hidden="true"></i>
+										</button>
+									</div>
+								</div>
+								<div class="card-body">
+
+									<div class="funny_scrollbar_yellow" id="place_images"
+										style="width: 100%; max-height: 11rem; overflow: auto; display: flex; justify-content: center; flex-wrap: wrap; position: relative; text-align: center;">
+									</div>
+
+								</div>
+								<div class="card-footer">
+									<button type="button" class="btn bg-warning"
+										data-toggle="modal" data-target="#new_place_modal">new
+										place</button>
+								</div>
+							</div>
+
+							<div class="card bg-gradient-warning">
+								<div class="card-header border-0">
+									<h3 class="card-title">
+										<i class="fas fa-th mr-1"></i>Session Places
+									</h3>
+
+									<div class="card-tools">
+										<button type="button" class="btn bg-warning btn-sm"
+											data-card-widget="collapse">
+											<i class="fas fa-minus"></i>
+										</button>
+										<button type="button" class="btn bg-warning btn-sm"
+											onclick="retriveSessionPlaces()">
+											<i class="fa fa-sync" aria-hidden="true"></i>
+										</button>
+									</div>
+								</div>
+								<div class="card-body">
+
+									<div class="funny_scrollbar_yellow" id="session_places_images"
+										style="width: 100%; max-height: 11rem; overflow: auto; display: flex; justify-content: center; flex-wrap: wrap; position: relative; text-align: center;">
+									</div>
+
+								</div>
+							</div>
+						</section>
+
+						<section id="fourth_column"
+							class="col-lg-3 col-md-3 col-sm-6 connectedSortable">
+
+							<div class="card bg-gradient-danger">
+								<div class="card-header border-0">
+									<h3 class="card-title">
+										<i class="fas fa-th mr-1"></i> Objects
+									</h3>
+
+									<div class="card-tools">
+										<button type="button" class="btn bg-danger btn-sm"
+											data-card-widget="collapse">
+											<i class="fas fa-minus"></i>
+										</button>
+										<button type="button" class="btn bg-danger btn-sm"
+											onclick="retriveObjects()">
+											<i class="fas fa-sync" aria-hidden="true"></i>
+										</button>
+									</div>
+								</div>
+
+								<div class="card-body">
+										
+										<div class="funny_scrollbar_red" id="object_images"
+											style="width: 100%; max-height: 11rem; overflow: auto; display: flex; justify-content: center; flex-wrap: wrap; position: relative; text-align: center;">
+										</div>
+								</div>
+					
+								<div class="card-footer">
+									<button type="button" class="btn bg-danger" id="new object"
+										data-toggle="modal" data-target="#new_object_modal">new
+										object</button>
+								</div>
+							</div>
+
+
+							<div class="card bg-gradient-danger">
+								<div class="card-header border-0">
+									<h3 class="card-title">
+										<i class="fas fa-th mr-1"></i>Session Objects
+									</h3>
+
+									<div class="card-tools">
+										<button type="button" class="btn bg-danger btn-sm"
+											data-card-widget="collapse">
+											<i class="fas fa-minus"></i>
+										</button>
+										<button type="button" class="btn bg-danger btn-sm"
+											onclick="retriveSessionObjects()">
+											<i class="fa fa-sync" aria-hidden="true"></i>
+										</button>
+									</div>
+								</div>
+
+								<div class="card-body">
+
+									<div class="funny_scrollbar_red" id="session_object_images"
+										style="width: 100%; max-height: 11rem; overflow: auto; display: flex; justify-content: center; flex-wrap: wrap; position: relative; text-align: center;">
+									</div>
+
+								</div>
+							</div>
+						</section>
+					</div>
+				</div>
+			</section>
+
+		</div>
+	</div>
+	<!-- /.content-wrapper -->
+	<!-- Control Sidebar -->
+	<aside class="control-sidebar control-sidebar-dark">
+		<!-- Control sidebar content goes here -->
+	</aside>
+	<!-- /.control-sidebar -->
+	<!-- ./wrapper -->
+
+	<!-- jQuery -->
+	<script src="plugins/jquery/jquery.min.js"></script>
+	<script src="plugins/moment/moment.min.js"></script>
+	<!-- jQuery UI 1.11.4 -->
+	<script src="plugins/jquery-ui/jquery-ui.min.js"></script>
+	<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+	<script>
+		$.widget.bridge('uibutton', $.ui.button);
+	</script>
+	<!-- Bootstrap 4 -->
+	<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<!-- ChartJS -->
+	<script src="plugins/chart.js/Chart.min.js"></script>
+	<!-- Sparkline -->
+	<script src="plugins/sparklines/sparkline.js"></script>
+	<!-- jQuery Knob Chart -->
+	<script src="plugins/jquery-knob/jquery.knob.min.js"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		src="plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+	<!-- overlayScrollbars -->
+	<script
+		src="plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+
+	<!-- most of the UI scripts -->
+	<script src="dist/js/adminlte.js"></script>
+
+	<!-- draggable widgets -->
+	<script src="dist/js/pages/dashboard.js"></script>
+
+	<!-- resizable bootstrap column -->
+	<script src="dist/js/dimensionScripts.js"></script>
+
+
+	<!-- handling slider changes -->
+	<script src="dist/js/slider.js"></script>
+	<!-- business logic script -->
+	<script src="administratorScript.js"></script>
+
+	<script type="text/javascript">
+		$(function() {
+
+			$('#new_session_start_date').datetimepicker({
+				format : 'YYYY/MM/DD HH:mm'
+			});
+
+			$('#new_session_end_date').datetimepicker({
+				useCurrent : false,
+				format : 'YYYY/MM/DD HH:mm'
+			});
+			$("#new_session_start_date").on(
+					"change.datetimepicker",
+					function(e) {
+						$('#new_session_end_date').datetimepicker('minDate',
+								e.date);
+					});
+			$("#new_session_end_date").on("change.datetimepicker", function(e) {
+				$('#new_session_start_date').datetimepicker('maxDate', e.date);
+			});
+		});
+	</script>
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,85 @@
+html {
+
+}
+
+tr:hover td {
+	background-color: #000000;
+	cursor: pointer;
+}
+
+th, td {
+	font-weight: unset;
+	padding-right: 0px;
+	padding-left: 0px;
+}
+
+.table::-webkit-scrollbar {
+  width: 5px;
+}
+
+.table::-webkit-scrollbar-track {
+  background: #ccc;
+}
+
+.table::-webkit-scrollbar-thumb {
+  background: #333;
+}
+
+.table::-webkit-scrollbar-track
+{
+    background-color: green;
+}
+
+.table::-webkit-scrollbar
+{
+    width: 8px;
+    background-color: #F5F5F5;
+}
+
+.table::-webkit-scrollbar-thumb
+{
+    background-color: red;
+}
+
+
+.object_image_box {
+	width: 100%;
+	heigth: 100%;
+	margin-top: 8px;
+}
+
+datalist {
+    width: 107%;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    margin-left: -5px
+}
+
+datalist option {
+    -webkit-box-flex: 1;
+    -webkit-flex-grow: 1;
+        -ms-flex-positive: 1;
+            flex-grow: 1;
+    -webkit-flex-basis: 0;
+        -ms-flex-preferred-size: 0;
+            flex-basis: 0;
+}
+
+.level {
+    width: 90%;
+    margin: 20px auto;
+}
+
+.level label {
+    display: block;
+    text-align: center;
+}
+
+.level input {
+    width: 100%;
+}
+
+
+

@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Campus murder</title>
+<!-- Tell the browser to be responsive to screen width -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Font Awesome -->
+<link rel="stylesheet"
+	href="plugins/fontawesome-free-5.11.2-web/css/all.min.css">
+
+<!-- Tempusdominus Bbootstrap 4 -->
+<link rel="stylesheet"
+	href="plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+<!-- iCheck -->
+<link rel="stylesheet"
+	href="plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+
+<!-- Theme style -->
+<link rel="stylesheet" href="dist/css/adminlte.min.css">
+<link rel="stylesheet" href="dist/css/slider.css">
+<link rel="stylesheet" href="dist/css/rounded_range.css">
+<link rel="stylesheet" href="dist/css/table.css">
+<link rel="stylesheet" href="dist/css/images_bhestia.css">
+<link rel="stylesheet" href="dist/css/scrollbars.css">
+<link rel="stylesheet" href="dist/css/general.css">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	href="plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+
+<!-- Google Font: Source Sans Pro -->
+<link
+	href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700"
+	rel="stylesheet">
+
+
+</head>
+<body style="background-color: black;" class="hold-transition sidebar-mini layout-fixed" >
+	<div class="modal fade" id="loginModal" tabindex="-1" role="dialog"
+		data-backdrop="static" data-keyboard="false"
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="container">
+					<h2>Login</h2>
+					<div class="row">
+						<div class="col-2"></div>
+						<div class="col-8">
+							<div class="form-group">
+								<input id="login_username" type="text" placeholder="username"
+									style="color: rgb(0, 0, 0); width: 100%; box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075) !important; border-radius: .25rem !important" />
+							</div>
+
+							<div class="form-group">
+								<input id="login_password" class="form-control"
+									style="width: 92%;" type="password" name="password"
+									placeholder="Password">
+							</div>
+
+							<div class="form-group">
+								<button class="btn bg-info btn-sm" style="width: 100%;"
+									onclick="login()">Log In</button>
+							</div>
+						</div>
+
+					</div>
+					<a class="forgot" href="#">user registration still not implemented, ask your administrator for an account</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="session_modal"
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="container">
+					<h2 id="opened_session_name"></h2>
+					<div class="row">
+
+						<div class="col-2"></div>
+						<div class="col-8">
+							<label>description: </label> <label
+								id="opened_session_description"></label> <br /> <label>start
+								date: </label> <label id="opened_session_start_date"></label> <br /> <label>end
+								date: </label> <label id="opened_session_end_date"></label>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn bg-info btn-sm" style="width: 100%;"
+							data-dismiss="modal" onclick="loginToThisSession()">login to this session</button>
+						<button class="btn bg-success btn-sm" style="width: 100%;"
+							data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="object_modal"
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="container">
+					<h2 id="opened_object_name"></h2>
+					<div class="row">
+
+						<div class="col-2"></div>
+						<div class="col-8">
+							<label>description: </label> <label
+								id="opened_object_description"></label> <br /> <label>multiplicator:
+							</label> <label id="opened_object_multiplicator"></label> <br />
+
+
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn bg-danger btn-sm" style="width: 100%;"
+							data-dismiss="modal" onclick="deleteObject()">cancel
+							object</button>
+						<button class="btn bg-info btn-sm" style="width: 100%;"
+							data-dismiss="modal" onclick="addObjectOnSession()">add
+							to session</button>
+						<button class="btn bg-success btn-sm" style="width: 100%;"
+							data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="place_modal"
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="container">
+					<h2 id="opened_place_name"></h2>
+					<div class="row">
+
+						<div class="col-2"></div>
+						<div class="col-8">
+							<label>description: </label> <label id="opened_place_description"></label>
+							<br /> <label>multiplicator: </label> <label
+								id="opened_place_multiplicator"></label> <br />
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn bg-danger btn-sm" style="width: 100%;"
+							data-dismiss="modal" onclick="deletePlace()">cancel
+							place</button>
+						<button class="btn bg-info btn-sm" style="width: 100%;"
+							data-dismiss="modal" onclick="addPlaceOnSession()">add
+							to session</button>
+						<button class="btn bg-success btn-sm" style="width: 100%;"
+							data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="confirm_kill_modal"
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="container">
+					<div class="row">
+
+						<div class="col-2"></div>
+						<div class="col-8">
+							<label id="killer_pending_declaration"></label>
+							<label style="margin-left: 2px;" >declared to have kill you</label>
+							<br/>
+
+							<label style="margin-right: 2px;">with</label>
+							<label id="object_pending_declaration" ></label>
+							<br/>
+							
+							<label style="margin-right: 2px;">in</label>
+							<label id="place_pending_declaration"></label>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn bg-danger btn-sm" style="width: 100%;"
+							data-dismiss="modal">decline kill (it was a mistake)</button>
+						<button class="btn bg-info btn-sm" style="width: 100%;"
+							data-dismiss="modal" onclick="confirmBeingKilled()">confirm kill</button>
+						<button class="btn bg-success btn-sm" style="width: 100%;"
+							data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="declare_kill_modal"
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="container">
+					<div class="row">
+
+						<div class="col-2"></div>
+						<div class="col-8">
+							<label>do you declare to have kill </label>
+							<label style="margin-left:2px;" id="user_target_declaration"></label>
+
+							<label style="margin-right: 2px;">with</label>
+							<label id="object_target_declaration" ></label>
+							<br/>
+							
+							<label style="margin-right: 2px;">in</label>
+							<label id="place_target_declaration"></label>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn bg-danger btn-sm" style="width: 100%;"
+							data-dismiss="modal">decline kill (it was a mistake)</button>
+						<button class="btn bg-info btn-sm" style="width: 100%;"
+							data-dismiss="modal" onclick="confirmKill()">confirm kill</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<!--
+	---start of the page
+	------------------------------------------------------------------------------------------
+	------------------------------------------------------------------------------------------
+	------------------------------------------------------------------------------------------
+	------------------------------------------------------------------------------------------
+	-->
+
+	<div class="wrapper">
+		<!-- Navbar -->
+		<nav class="navbar navbar-expand">
+			<!-- Left navbar links -->
+			<ul class="navbar-nav">
+				<!--here elements floating left-->
+				<button style="margin: 8px;" type="button"
+					onclick="decreaseDimension()" class="btn bg-info btn-sm"
+					data-card-widget="collapse">
+					<i class="fas fa-minus"></i>
+				</button>
+				<button style="margin: 8px;" type="button"
+					onclick="increaseDimension()" class="btn bg-info btn-sm"
+					data-card-widget="remove">
+					<i class="fas fa-plus"></i>
+				</button>
+				
+					<label id="selected_session_text" style="margin-top: 8px; margin-left: 8px;" class="text-light">No session selected</label>
+				
+			</ul>
+			<ul class="navbar-nav ml-auto">
+			</ul>
+		</nav>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div>
+			<!-- Main content -->
+			<section class="content">
+				<div class="container-fluid">
+					<!-- Main row -->
+					<div class="row">
+				
+						<section id="first_column"
+							class="col-lg-3 col-md-3 col-sm-6 connectedSortable">
+							<div id="sessions_card" class="card bg-gradient-info">
+								<div class="card-header border-0">
+									<h3 class="card-title">
+										<i class="fas fa-th mr-1"></i> select a session:
+									</h3>
+
+									<div class="card-tools">
+										<button type="button" class="btn bg-info btn-sm"
+											data-card-widget="collapse">
+											<i class="fas fa-minus"></i>
+										</button>
+										<button type="button" class="btn bg-info btn-sm"
+											data-card-widget="remove">
+											<i class="fas fa-times"></i>
+										</button>
+									</div>
+								</div>
+								<div class="card-body pt-0" id="sessions_widget">
+									<div style="width: 100%; height: 100%; overflow: auto;">
+										<table class="table" cellspacing="0" cellpadding="1"
+											width="100%" id="allSessionsTable">
+											<tbody>
+												<label></label>
+											</tbody>
+										</table>
+									</div>
+								</div>
+								<!-- /.card-footer -->
+							</div>
+
+						</section>
+
+						<section id="second_column"
+							class="col-lg-3 col-md-3 col-sm-6 connectedSortable">
+
+							<div class="card bg-gradient-success">
+								<div class="card-header border-0">
+									<h3 class="card-title">
+										<i class="fas fa-th mr-1"></i> Your mission
+									</h3>
+
+									<div class="card-tools">
+										<button type="button" class="btn bg-success btn-sm"
+											data-card-widget="collapse">
+											<i class="fas fa-minus"></i>
+										</button>
+										<button type="button" class="btn bg-success btn-sm"
+											onclick="alert('not implemented update mission')">
+											<i class="fa fa-sync" aria-hidden="true"></i>
+										</button>
+									</div>
+								</div>
+								<div class="card-body">
+									
+									<div id="mission" style="display: none;">
+										<label>actual points: </label>
+										<label id="user_actual_points"></label> 
+
+										<div style="width: 100%; border-color: black; border: 1px solid #dee2e6; 
+											border-radius: .25rem; box-shadow: 0 .5rem 1rem rgba(0,0,0,.15); max-height: 15rem; overflow: auto;
+											display: flex; justify-content: center; flex-wrap: wrap; position: relative; text-align: center;">
+										
+											<label style="line-height: 4.8rem; margin-right: 2px; ">target :</label>
+											<img id="user_target_image" class="image_bhestia" src="/campus_murder_web_server/SERVER_DATA/PROFILE_IMAGES/Folder3.jpg"></img>
+										</div>
+										<div style="width: 100%; border-color: black; border: 1px solid #dee2e6; 
+											border-radius: .25rem; box-shadow: 0 .5rem 1rem rgba(0,0,0,.15); max-height: 15rem; overflow: auto;
+											display: flex; justify-content: center; flex-wrap: wrap; position: relative; text-align: center;">
+											
+											<img id="place_image" class="image_bhestia" src="/campus_murder_web_server/SERVER_DATA/PROFILE_IMAGES/Folder3.jpg"></img>
+											<img id="object_image" class="image_bhestia"  src="/campus_murder_web_server/SERVER_DATA/PROFILE_IMAGES/Folder3.jpg"></img>
+										</div>
+										<label style="float:right; margin-left: 2px;">points</label><label style="float:right;" id="actual_target_points"></label><label style="float:right; margin-right: 2px;">reward: </label>
+									</div>
+								</div>
+								<div class="card-footer">
+									<button type="button" class="btn bg-success"
+										data-toggle="modal" data-target="#declare_kill_modal">confirm kill</button>
+								</div>
+							</div>
+
+						</section>
+
+						<section id="third_column"
+							class="col-lg-3 col-md-3 col-sm-6 connectedSortable">
+
+							<div class="card bg-gradient-danger">
+									<div class="card-header border-0">
+										<h3 class="card-title">
+											<i class="fas fa-th mr-1"></i> Kill declarations
+										</h3>
+	
+										<div class="card-tools">
+											<button type="button" class="btn bg-danger btn-sm"
+												data-card-widget="collapse">
+												<i class="fas fa-minus"></i>
+											</button>
+											<button type="button" class="btn bg-danger btn-sm"
+												onclick="getMeKillList()">
+												<i class="fas fa-sync" aria-hidden="true"></i>
+											</button>
+										</div>
+									</div>
+	
+									<div class="card-body pt-0">
+										<div style="width: 100%; height: 100%; overflow: auto;">
+											<table class="table" cellspacing="0" cellpadding="1"
+												width="100%" id="pendingKillDeclarations">
+												<tbody>
+													<label></label>
+												</tbody>
+											</table>
+										</div>
+									</div>
+						
+									<div class="card-footer">
+										<button type="button" class="btn bg-danger" id="new object"
+											data-toggle="modal" data-target="#new_object_modal">new
+											object</button>
+									</div>
+								</div>
+	
+
+							<div class="card bg-gradient-warning">
+								<div class="card-header border-0">
+									<h3 class="card-title">
+										<i class="fas fa-th mr-1"></i> Places
+									</h3>
+
+									<div class="card-tools">
+										<button type="button" class="btn bg-warning btn-sm"
+											data-card-widget="collapse">
+											<i class="fas fa-minus"></i>
+										</button>
+										<button type="button" class="btn bg-warning btn-sm"
+											onclick="retrivePlaces()">
+											<i class="fa fa-sync" aria-hidden="true"></i>
+										</button>
+									</div>
+								</div>
+								<div class="card-body">
+
+									<div class="funny_scrollbar_yellow" id="place_images"
+										style="width: 100%; max-height: 11rem; overflow: auto; display: flex; justify-content: center; flex-wrap: wrap; position: relative; text-align: center;">
+									</div>
+
+								</div>
+								<div class="card-footer">
+									<button type="button" class="btn bg-warning"
+										data-toggle="modal" data-target="#new_place_modal">new
+										place</button>
+								</div>
+							</div>
+
+							<div class="card bg-gradient-warning">
+								<div class="card-header border-0">
+									<h3 class="card-title">
+										<i class="fas fa-th mr-1"></i>Session Places
+									</h3>
+
+									<div class="card-tools">
+										<button type="button" class="btn bg-warning btn-sm"
+											data-card-widget="collapse">
+											<i class="fas fa-minus"></i>
+										</button>
+										<button type="button" class="btn bg-warning btn-sm"
+											onclick="retriveSessionPlaces()">
+											<i class="fa fa-sync" aria-hidden="true"></i>
+										</button>
+									</div>
+								</div>
+								<div class="card-body">
+
+									<div class="funny_scrollbar_yellow" id="session_places_images"
+										style="width: 100%; max-height: 11rem; overflow: auto; display: flex; justify-content: center; flex-wrap: wrap; position: relative; text-align: center;">
+									</div>
+
+								</div>
+							</div>
+						</section>
+
+						<section id="fourth_column"
+							class="col-lg-3 col-md-3 col-sm-6 connectedSortable">
+
+							<div class="card bg-gradient-danger">
+								<div class="card-header border-0">
+									<h3 class="card-title">
+										<i class="fas fa-th mr-1"></i>Session Objects
+									</h3>
+
+									<div class="card-tools">
+										<button type="button" class="btn bg-danger btn-sm"
+											data-card-widget="collapse">
+											<i class="fas fa-minus"></i>
+										</button>
+										<button type="button" class="btn bg-danger btn-sm"
+											onclick="retriveSessionObjects()">
+											<i class="fa fa-sync" aria-hidden="true"></i>
+										</button>
+									</div>
+								</div>
+
+								<div class="card-body">
+
+									<div class="funny_scrollbar_red" id="session_object_images"
+										style="width: 100%; max-height: 11rem; overflow: auto; display: flex; justify-content: center; flex-wrap: wrap; position: relative; text-align: center;">
+									</div>
+
+								</div>
+							</div>
+						</section>
+					</div>
+				</div>
+			</section>
+
+		</div>
+	</div>
+	<!-- /.content-wrapper -->
+	<!-- Control Sidebar -->
+	<aside class="control-sidebar control-sidebar-dark">
+		<!-- Control sidebar content goes here -->
+	</aside>
+	<!-- /.control-sidebar -->
+	<!-- ./wrapper -->
+
+	<!-- jQuery -->
+	<script src="plugins/jquery/jquery.min.js"></script>
+	<script src="plugins/moment/moment.min.js"></script>
+	<!-- jQuery UI 1.11.4 -->
+	<script src="plugins/jquery-ui/jquery-ui.min.js"></script>
+	<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+	<script>
+		$.widget.bridge('uibutton', $.ui.button);
+	</script>
+	<!-- Bootstrap 4 -->
+	<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<!-- ChartJS -->
+	<script src="plugins/chart.js/Chart.min.js"></script>
+	<!-- Sparkline -->
+	<script src="plugins/sparklines/sparkline.js"></script>
+	<!-- jQuery Knob Chart -->
+	<script src="plugins/jquery-knob/jquery.knob.min.js"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		src="plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+	<!-- overlayScrollbars -->
+	<script
+		src="plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+
+	<!-- most of the UI scripts -->
+	<script src="dist/js/adminlte.js"></script>
+
+	<!-- draggable widgets -->
+	<script src="dist/js/pages/dashboard.js"></script>
+
+	<!-- resizable bootstrap column -->
+	<script src="dist/js/dimensionScripts.js"></script>
+
+
+	<!-- handling slider changes -->
+	<script src="dist/js/slider.js"></script>
+	<!-- business logic script -->
+	<script src="user.js"></script>
+
+	<script type="text/javascript">
+		$(function() {
+
+			$('#new_session_start_date').datetimepicker({
+				format : 'YYYY/MM/DD HH:mm'
+			});
+
+			$('#new_session_end_date').datetimepicker({
+				useCurrent : false,
+				format : 'YYYY/MM/DD HH:mm'
+			});
+			$("#new_session_start_date").on(
+					"change.datetimepicker",
+					function(e) {
+						$('#new_session_end_date').datetimepicker('minDate',
+								e.date);
+					});
+			$("#new_session_end_date").on("change.datetimepicker", function(e) {
+				$('#new_session_start_date').datetimepicker('maxDate', e.date);
+			});
+		});
+	</script>
+
+
+
+
+</body>
+</html>

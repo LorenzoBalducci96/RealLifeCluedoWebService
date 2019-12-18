@@ -1,0 +1,15 @@
+#allSessionsTable { 
+	border-radius: 22px;
+}
+
+.floatRight {text-align:right; }
+
+#allSessionsTable tr{
+	
+	border-radius: 100px;
+}
+
+#allSessionsTable tr:hover {
+	background-color: #aaaaaa;
+	cursor:pointer;
+}
