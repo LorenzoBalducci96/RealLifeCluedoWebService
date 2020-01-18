@@ -1,6 +1,7 @@
 package administratorPage;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import javax.servlet.ServletConfig;
@@ -25,13 +26,14 @@ public class CreateSessionServlet extends HttpServlet {
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, java.io.IOException {
-		System.out.println("received objects list");
+		System.out.println("received create session request");
 		if((int) request.getSession().getAttribute("status_code") != 250) {
-			System.out.println("WARNING: UNLOGGED CREATE SESSION LIST");
+			System.out.println("WARNING: UNLOGGED CREATE SESSION REQUEST");
 		}else {
 
 			StringBuilder sb = new StringBuilder();
-			BufferedReader br = request.getReader();
+			InputStream inputStream = request.getInputStream();
+			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream , StandardCharsets.UTF_8));
 			String str;
 			while( (str = br.readLine()) != null ){
 				sb.append(str);

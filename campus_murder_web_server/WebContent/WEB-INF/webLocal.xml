@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+	version="3.1">
+
+	<display-name>camplus_murder</display-name>
+	<description>
+      Configuration file for campus_murder backend tomcat services
+    </description>
+    
+    
+    <env-entry> 
+    	<env-entry-name>email</env-entry-name>
+    	<env-entry-type>java.lang.String</env-entry-type>
+    	<env-entry-value>delittiInAlma@hotmail.com</env-entry-value> 
+	</env-entry>
+	<env-entry> 
+    	<env-entry-name>password</env-entry-name>
+    	<env-entry-type>java.lang.String</env-entry-type>
+    	<env-entry-value>delittiDaIncubo333</env-entry-value> 
+	</env-entry>
+  	<env-entry> 
+    	<env-entry-name>server-address</env-entry-name>
+    	<env-entry-type>java.lang.String</env-entry-type>
+    	<env-entry-value>http://localhost:8080/campus_murder_web_server/completeRegistration?register_code=</env-entry-value> 
+	</env-entry>
+	<env-entry> 
+    	<env-entry-name>confirm-kill-address</env-entry-name>
+    	<env-entry-type>java.lang.String</env-entry-type>
+    	<env-entry-value>http://localhost:8080/campus_murder_web_server/confirmKillOnCode?confirmation_code=</env-entry-value> 
+	</env-entry>
+
+	<servlet>
+		<servlet-name>RegistrationRequestServlet</servlet-name>
+		<servlet-class>campusMurder.RegistrationRequestServlet</servlet-class>
+		<init-param>
+			<param-name>temp-folder</param-name>
+			<param-value>C:\temp</param-value>
+		</init-param>
+		<init-param>
+			<param-name>server-address</param-name>
+			<param-value>http://localhost:8080/campus_murder_web_server/completeRegistration?register_code=</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RegistrationRequestServlet</servlet-name>
+		<url-pattern>/registrationRequest</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>CompleteRegistrationServlet</servlet-name>
+		<servlet-class>campusMurder.CompleteRegistrationServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CompleteRegistrationServlet</servlet-name>
+		<url-pattern>/completeRegistration</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>LoginServlet</servlet-name>
+		<servlet-class>campusMurder.LoginServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>LoginServlet</servlet-name>
+		<url-pattern>/loginAction</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>KillServlet</servlet-name>
+		<servlet-class>campusMurder.KillServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>KillServlet</servlet-name>
+		<url-pattern>/killAction</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>GetPendingKillServlet</servlet-name>
+		<servlet-class>campusMurder.GetPendingKillServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>GetPendingKillServlet</servlet-name>
+		<url-pattern>/getPendingKill</url-pattern>
+	</servlet-mapping>
+
+	
+	
+	<servlet>
+		<servlet-name>ConfirmKillOnCodeServlet</servlet-name>
+		<servlet-class>campusMurder.ConfirmKillOnCodeServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ConfirmKillOnCodeServlet</servlet-name>
+		<url-pattern>/confirmKillOnCode</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ConfirmDeadServlet</servlet-name>
+		<servlet-class>campusMurder.ConfirmDeadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ConfirmDeadServlet</servlet-name>
+		<url-pattern>/confirmDead</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>RequestReportServlet</servlet-name>
+		<servlet-class>administratorPage.RequestReportServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RequestReportServlet</servlet-name>
+		<url-pattern>/requestReport</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>DenyDeadServlet</servlet-name>
+		<servlet-class>campusMurder.DenyDeadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DenyDeadServlet</servlet-name>
+		<url-pattern>/denyDead</url-pattern>
+	</servlet-mapping>
+	
+
+	<servlet>
+		<servlet-name>RequestKillListServlet</servlet-name>
+		<servlet-class>campusMurder.RequestKillListServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RequestKillListServlet</servlet-name>
+		<url-pattern>/requestKillList</url-pattern>
+	</servlet-mapping>
+
+
+
+	<servlet>
+		<servlet-name>RequestHighlightsServlet</servlet-name>
+		<servlet-class>campusMurder.RequestHighlightsServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RequestHighlightsServlet</servlet-name>
+		<url-pattern>/requestHighlights</url-pattern>
+	</servlet-mapping>
+
+
+
+	<servlet>
+		<servlet-name>AdministratorLoginServlet</servlet-name>
+		<servlet-class>administratorPage.AdministratorLoginServlet</servlet-class>
+		<init-param>
+			<param-name>administrator_password</param-name>
+			<param-value>admin</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AdministratorLoginServlet</servlet-name>
+		<url-pattern>/administratorLoginAction</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>RequestObjectsServlet</servlet-name>
+		<servlet-class>administratorPage.RequestObjectsServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RequestObjectsServlet</servlet-name>
+		<url-pattern>/requestObjects</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>RequestSessionObjectsServlet</servlet-name>
+		<servlet-class>administratorPage.RequestSessionObjectsServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RequestSessionObjectsServlet</servlet-name>
+		<url-pattern>/getSelectedSessionObjects</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>RequestSessionUsersServlet</servlet-name>
+		<servlet-class>administratorPage.RequestSessionUsersServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RequestSessionUsersServlet</servlet-name>
+		<url-pattern>/getSelectedSessionUsers</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet>
+		<servlet-name>RequestPlacesServlet</servlet-name>
+		<servlet-class>administratorPage.RequestPlacesServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RequestPlacesServlet</servlet-name>
+		<url-pattern>/requestPlaces</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>RequestSessionPlacesServlet</servlet-name>
+		<servlet-class>administratorPage.RequestSessionPlacesServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RequestSessionPlacesServlet</servlet-name>
+		<url-pattern>/getSelectedSessionPlaces</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>UploadObjectServlet</servlet-name>
+		<servlet-class>administratorPage.UploadObjectServlet</servlet-class>
+		<init-param>
+			<param-name>temp-folder</param-name>
+			<param-value>C:\temp</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UploadObjectServlet</servlet-name>
+		<url-pattern>/uploadObject</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>AddObjectToSessionServlet</servlet-name>
+		<servlet-class>administratorPage.AddObjectToSessionServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AddObjectToSessionServlet</servlet-name>
+		<url-pattern>/addObjectToSession</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>AddUserToSessionServlet</servlet-name>
+		<servlet-class>administratorPage.AddUserToSessionServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AddUserToSessionServlet</servlet-name>
+		<url-pattern>/addUserToSession</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>RemoveObjectFromSessionServlet</servlet-name>
+		<servlet-class>administratorPage.RemoveObjectFromSessionServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RemoveObjectFromSessionServlet</servlet-name>
+		<url-pattern>/removeObjectFromSession</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>RemoveUserFromSessionServlet</servlet-name>
+		<servlet-class>administratorPage.RemoveUserFromSessionServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RemoveUserFromSessionServlet</servlet-name>
+		<url-pattern>/removeUserFromSession</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>UploadNewUserServlet</servlet-name>
+		<servlet-class>administratorPage.UploadNewUserServlet</servlet-class>
+		<init-param>
+			<param-name>temp-folder</param-name>
+			<param-value>C:\temp</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UploadNewUserServlet</servlet-name>
+		<url-pattern>/uploadNewUser</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet>
+		<servlet-name>RemovePlaceFromSessionServlet</servlet-name>
+		<servlet-class>administratorPage.RemovePlaceFromSessionServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RemovePlaceFromSessionServlet</servlet-name>
+		<url-pattern>/removePlaceFromSession</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet>
+		<servlet-name>AddPlaceToSessionServlet</servlet-name>
+		<servlet-class>administratorPage.AddPlaceToSessionServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AddPlaceToSessionServlet</servlet-name>
+		<url-pattern>/addPlaceToSession</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>UploadPlaceServlet</servlet-name>
+		<servlet-class>administratorPage.UploadPlaceServlet</servlet-class>
+		<init-param>
+			<param-name>temp-folder</param-name>
+			<param-value>C:\temp</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UploadPlaceServlet</servlet-name>
+		<url-pattern>/uploadPlace</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>DeleteObjectServlet</servlet-name>
+		<servlet-class>administratorPage.DeleteObjectServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DeleteObjectServlet</servlet-name>
+		<url-pattern>/deleteObject</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>DeletePlaceServlet</servlet-name>
+		<servlet-class>administratorPage.DeletePlaceServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DeletePlaceServlet</servlet-name>
+		<url-pattern>/deletePlace</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet>
+		<servlet-name>RequestSessionListServlet</servlet-name>
+		<servlet-class>administratorPage.RequestSessionListServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RequestSessionListServlet</servlet-name>
+		<url-pattern>/requestAdministratorSessionList</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>CreateSessionServlet</servlet-name>
+		<servlet-class>administratorPage.CreateSessionServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CreateSessionServlet</servlet-name>
+		<url-pattern>/createSession</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>DeleteSessionServlet</servlet-name>
+		<servlet-class>administratorPage.DeleteSessionServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DeleteSessionServlet</servlet-name>
+		<url-pattern>/deleteSession</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>GetAllUsersServlet</servlet-name>
+		<servlet-class>administratorPage.GetAllUsersServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>GetAllUsersServlet</servlet-name>
+		<url-pattern>/getAllUsers</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>DeleteUserServlet</servlet-name>
+		<servlet-class>administratorPage.DeleteUserServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DeleteUserServlet</servlet-name>
+		<url-pattern>/deleteUser</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>StartSessionServlet</servlet-name>
+		<servlet-class>administratorPage.StartSessionServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>StartSessionServlet</servlet-name>
+		<url-pattern>/startSession</url-pattern>
+	</servlet-mapping>
+
+
+	<welcome-file-list>
+		<welcome-file>user.html</welcome-file>
+	</welcome-file-list>
+	<error-page>
+		<location>/error.html</location>
+	</error-page>
+
+</web-app>

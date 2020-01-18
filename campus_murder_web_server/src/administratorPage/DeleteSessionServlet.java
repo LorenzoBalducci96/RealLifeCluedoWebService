@@ -1,6 +1,7 @@
 package administratorPage;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import javax.servlet.ServletConfig;
@@ -31,7 +32,9 @@ public class DeleteSessionServlet extends HttpServlet {
 		}else {
 
 			StringBuilder sb = new StringBuilder();
-			BufferedReader br = request.getReader();
+			InputStream inputStream = request.getInputStream();
+			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream , StandardCharsets.UTF_8));
+
 			String str;
 			while( (str = br.readLine()) != null ){
 				sb.append(str);

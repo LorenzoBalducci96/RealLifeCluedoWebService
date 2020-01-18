@@ -1,6 +1,7 @@
 package administratorPage;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -35,7 +36,9 @@ public class AddObjectToSessionServlet extends HttpServlet {
 		}else {
 
 			StringBuilder sb = new StringBuilder();
-			BufferedReader br = request.getReader();
+			InputStream inputStream = request.getInputStream();
+			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream , StandardCharsets.UTF_8));
+
 			String str;
 			while( (str = br.readLine()) != null ){
 				sb.append(str);

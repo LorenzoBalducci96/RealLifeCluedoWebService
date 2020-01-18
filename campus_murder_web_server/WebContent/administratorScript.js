@@ -421,6 +421,48 @@ function useThisSession(){
 	retriveSessionObjects();
 	retriveSessionPlaces();
 	retriveSessionUsers();
+	retriveReport();
+}
+
+function retriveReport(){
+	var xhr = new XMLHttpRequest();
+	var url = "requestReport";
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-Type", "application/json");
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState === 4 && xhr.status === 200) {
+			killListResponse = JSON.parse(xhr.responseText);
+			if (killListResponse["status_code"] == 200){
+				var table = document.getElementById("reportTable");
+				table.innerHTML = "";
+				var killList = killListResponse["report"]
+				var i = 0
+				while(killList[i] != null){
+					//for images: cell1.innerHTML = '<img src="folder.png" class="icon">'; //width="' + (window.screen.height * window.devicePixelRatio) / 20 + '" height="' + (window.screen.height * window.devicePixelRatio) / 20 + '" />';
+					var row = table.insertRow(0);
+					var type = row.insertCell(0)
+					var killer = row.insertCell(1);
+					var killed = row.insertCell(2);
+					var time = row.insertCell(3);
+					
+					//var time = row.insertCell(4);
+					type.innerHTML = killList[i]["type"]
+					killer.innerHTML = killList[i]["killer"]
+					killed.innerHTML = killList[i]["killed"]
+					time.innerHTML = killList[i]["time"]
+					//time.innerHTML = killList[i]["time"]
+					i++;
+				}
+			}else{
+				alert("server error, not 200 status_code on json response")
+			}
+		}
+	}
+	var data = JSON
+	.stringify({
+		"session" : selectedSession
+	});
+	xhr.send(data);
 }
 
 function startSession(){

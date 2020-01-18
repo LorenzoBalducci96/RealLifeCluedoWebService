@@ -1,6 +1,7 @@
 package administratorPage;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -29,13 +30,15 @@ public class AddUserToSessionServlet extends HttpServlet {
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, java.io.IOException {
-		System.out.println("received add place to session");
+		System.out.println("received add user to session");
 		if((int) request.getSession().getAttribute("status_code") != 250) {
 			System.out.println("WARNING: UNLOGGED ADD PLACE TO SESSION");
 		}else {
 
 			StringBuilder sb = new StringBuilder();
-			BufferedReader br = request.getReader();
+			InputStream inputStream = request.getInputStream();
+			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream , StandardCharsets.UTF_8));
+
 			String str;
 			while( (str = br.readLine()) != null ){
 				sb.append(str);

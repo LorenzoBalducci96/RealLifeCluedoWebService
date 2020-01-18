@@ -13,3 +13,33 @@
 	background-color: #aaaaaa;
 	cursor:pointer;
 }
+
+
+
+
+
+
+#endedSessionsTable { 
+	border-radius: 22px;
+}
+
+.floatRight {text-align:right; }
+
+#endedSessionsTable tr{
+	
+	border-radius: 100px;
+}
+
+#endedSessionsTable tr:hover {
+	background-color: #aaaaaa;
+	cursor:pointer;
+}
+
+
+
+
+
+#pendingKillDeclarations tr:hover {
+	background-color: #aaaaaa;
+	cursor:pointer;
+}

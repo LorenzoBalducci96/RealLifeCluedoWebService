@@ -1,4 +1,4 @@
-package administratorPage;
+package campusMurder;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -18,7 +18,7 @@ import com.mysql.cj.xdevapi.JsonArray;
 import utils.DBConnect;
 
 
-public class AdministratorLoginServlet extends HttpServlet {
+public class CompleteRegistrationServlet extends HttpServlet {
 
    public void init( ){
 	   
@@ -26,7 +26,6 @@ public class AdministratorLoginServlet extends HttpServlet {
    
    public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, java.io.IOException {
-	   System.out.println("received post");
 	   StringBuilder sb = new StringBuilder();
 		InputStream inputStream = request.getInputStream();
 		BufferedReader br = new BufferedReader(new InputStreamReader(inputStream , StandardCharsets.UTF_8));
@@ -36,30 +35,22 @@ public class AdministratorLoginServlet extends HttpServlet {
 	       sb.append(str);
 	   }    
 	   JSONObject jobj = new JSONObject(sb.toString());
-	   String password = jobj.getString("administrator_password");
-	   System.out.println(password);
-	   JSONObject jsonResponse = new JSONObject();
-	   if(password.equals(getServletConfig().getInitParameter("administrator_password"))) {
-		   HttpSession session = request.getSession();
-		   session.setAttribute("status_code", 250);
-		   jsonResponse.accumulate("status_code", 200);
-	   }
-	   else {
-		   jsonResponse.accumulate("status_code", 401);
-	   }
+	   
+	   String codice = jobj.getString("register_code");
+	   
+	   JSONObject completeRegistration = DBConnect.getInstance().completeRegistration(codice);
 	   
 	   BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), "UTF-8"));
-       writer.write(jsonResponse.toString());
+       writer.write(completeRegistration.toString());
        writer.flush();
        writer.close();
    }
       
       public void doGet(HttpServletRequest request, HttpServletResponse response)
          throws ServletException, java.io.IOException {
-    	  System.out.println("received get");
-
-         throw new ServletException("GET method used with " +
-            getClass( ).getName( )+": POST method required.");
+    	  String register_code = request.getParameter("register_code");  
+			DBConnect.getInstance().completeRegistration(register_code);
+			response.getWriter().write("confermo avvenuta registrazione " + register_code);
 
       }
       

@@ -1,4 +1,4 @@
-package administratorPage;
+package campusMurder;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -18,7 +18,7 @@ import com.mysql.cj.xdevapi.JsonArray;
 import utils.DBConnect;
 
 
-public class RemoveObjectFromSessionServlet extends HttpServlet {
+public class DenyDeadServlet extends HttpServlet {
 
 	public void init( ){
 
@@ -26,11 +26,10 @@ public class RemoveObjectFromSessionServlet extends HttpServlet {
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, java.io.IOException {
-		System.out.println("received delete object from session");
-		if((int) request.getSession().getAttribute("status_code") != 250) {
-			System.out.println("CRITICAL: UNLOGGED DELETE OBJECT FROM SESSION");
+		System.out.println("received post deny dead");
+		if((int) request.getSession().getAttribute("status_code") != 200) {
+			System.out.println("CRITICAL: UNLOGGED DENY DEAD REQUEST");
 		}else {
-
 			StringBuilder sb = new StringBuilder();
 			InputStream inputStream = request.getInputStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream , StandardCharsets.UTF_8));
@@ -40,15 +39,18 @@ public class RemoveObjectFromSessionServlet extends HttpServlet {
 				sb.append(str);
 			}    
 			JSONObject jobj = new JSONObject(sb.toString());
-			String object_name = jobj.getString("object_name");
-			String session_name = jobj.getString("session_name");
-			
-			JSONObject jsonObject = DBConnect.getInstance().deleteObjectFromSession(session_name, object_name);
+
+			String killer = jobj.getString("killer");
+			String killed = (String) request.getSession().getAttribute("username");
+			String session = jobj.getString("session");
+
+			JSONObject jsonObject = DBConnect.getInstance().denyBeingKilled(killer, killed, session);
 
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), "UTF-8"));
 			writer.write(jsonObject.toString());
 			writer.flush();
 			writer.close();
+
 		}
 
 	}

@@ -65,12 +65,109 @@
 						</div>
 
 					</div>
-					<a class="forgot" href="#">user registration still not implemented, ask your administrator for an account</a>
+					<a class="forgot" href="" data-toggle="modal" data-target="#registration_modal">not an account? register now!</a>
+					
 				</div>
 			</div>
 		</div>
 	</div>
 
+	<div class="modal fade" tabindex="-1" role="dialog" id="registration_modal"
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="container">
+					<h2>register new account</h2>
+					<h6 style="text-align: center; width: 100%;">a confirmation email will be sent here</h6>
+					<div class="row">
+						<div class="col-2" style="text-align: right;"></div>
+						<div class="col-8">
+							<div class="form-group">
+								<input id="new_user_email" class="form-control" type="text"
+									name="new_user_email" placeholder="example@example.com">
+							</div>
+						</div>
+					</div>
+					<h6 style="text-align: center; width: 100%;">username (will be used for login and shown in highlights)</h6>
+					
+					<div class="row">
+						<div class="col-2" style="text-align: right;"></div>
+						<div class="col-8">
+							<div class="form-group">			
+								<input id="new_user_username" class="form-control" type="text"
+									name="new_user_username" placeholder="the_best999">
+							</div>
+						</div>
+					</div>
+
+					<h6 style="text-align: center; width: 100%;">choose and confirm a password</h6>
+					<div class="row">
+						<div class="col-2"></div>
+						<div class="col-8">
+							<input id="new_user_password" class="form-control"
+								type="password"	placeholder="Password">
+							<input id="new_user_confirm_password" class="form-control"
+								type="password" placeholder="confirm password">
+								
+							<div class="custom-file">
+								<input type="file" accept="image/*" class="custom-file-input" id="new_user_profile_image">
+								<label class="custom-file-label"
+									style="height: auto !important;" for="new_user_profile_image">Choose profile image</label>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button class="btn bg-info btn-sm" style="width: 100%;"
+						onclick="sendRegistrationRequest()" data-dismiss="modal">register</button>
+					<button class="btn bg-success btn-sm" style="width: 100%;"
+						data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+	
+	<div class="modal fade" tabindex="-1" role="dialog" id="ended_session_modal"
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="container">
+					<h2 id="ended_session_name"></h2>
+					<div class="row">
+						<div class="col-2"></div>
+						<div class="col-8">
+							<label>description: </label> <label
+								id="ended_session_description"></label> <br /> <label>start
+								date: </label> <label id="ended_session_start_date"></label> <br /> <label>end
+								date: </label> <label id="ended_session_end_date"></label>
+							
+							<div class="funny_scrollbar_yellow" id="place_images"
+								style="width: 100%; max-height: 11rem; overflow: auto; display: flex; justify-content: center; flex-wrap: wrap; position: relative; text-align: center;">
+								<table class="table" cellspacing="0" cellpadding="1"
+									width="100%" id="endedSessionHighlightsTable">
+									<tbody>
+										<label></label>
+									</tbody>
+								</table>
+							</div>
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	
+	
+	
+	
+	
 	<div class="modal fade" tabindex="-1" role="dialog" id="session_modal"
 		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered" role="document">
@@ -166,27 +263,35 @@
 			<div class="modal-content">
 				<div class="container">
 					<div class="row">
-
-						<div class="col-2"></div>
+						<div class="col-4">
+								<img id="killer_pending_image" style="width: 100%; margin-top: 4px; border-radius: 8px;"></img>
+						</div>
 						<div class="col-8">
-							<label id="killer_pending_declaration"></label>
-							<label style="margin-left: 2px;" >declared to have kill you</label>
-							<br/>
-
-							<label style="margin-right: 2px;">with</label>
-							<label id="object_pending_declaration" ></label>
-							<br/>
-							
-							<label style="margin-right: 2px;">in</label>
-							<label id="place_pending_declaration"></label>
+								<label id="killer_pending_declaration"></label>
+								<label style="margin-left: 2px;" >declared to have kill you</label>
+								<label style="margin-left: 2px;" >in date</label>
+								<label style="margin-left: 2px;" id="time_pending_declaration"></label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-5">
+								<label style="margin-right: 2px;">with</label>
+								<label id="object_pending_declaration" ></label>
+								<br/>
+								<label style="margin-right: 2px;">in</label>
+								<label id="place_pending_declaration"></label>
+						</div>
+						<div class="col-7">
+								<img id="object_pending_image" style="width: 40%; margin: 4px; border-radius: 8px;"></img>
+								<img id="place_pending_image" style="width: 40%; margin: 4px; border-radius: 8px;"></img>
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button class="btn bg-danger btn-sm" style="width: 100%;"
-							data-dismiss="modal">decline kill (it was a mistake)</button>
-						<button class="btn bg-info btn-sm" style="width: 100%;"
+						<button class="btn bg-danger btn-sm" style="width: 100%; height: 4.4rem;"
+							data-dismiss="modal" onclick="denyBeingKilled()">decline kill (it was a mistake)</button>
+						<button class="btn bg-info btn-sm" style="width: 100%; height: 4.4rem;"
 							data-dismiss="modal" onclick="confirmBeingKilled()">confirm kill</button>
-						<button class="btn bg-success btn-sm" style="width: 100%;"
+						<button class="btn bg-success btn-sm" style="width: 100%; height: 4.4rem;"
 							data-dismiss="modal">Close</button>
 					</div>
 				</div>
@@ -215,9 +320,9 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button class="btn bg-danger btn-sm" style="width: 100%;"
-							data-dismiss="modal">decline kill (it was a mistake)</button>
-						<button class="btn bg-info btn-sm" style="width: 100%;"
+						<button class="btn bg-danger btn-sm" style="width: 100%; height: 4.4rem;"
+							data-dismiss="modal">close</button>
+						<button class="btn bg-info btn-sm" style="width: 100%; height: 4.4rem;"
 							data-dismiss="modal" onclick="confirmKill()">confirm kill</button>
 					</div>
 				</div>
@@ -272,7 +377,7 @@
 							<div id="sessions_card" class="card bg-gradient-info">
 								<div class="card-header border-0">
 									<h3 class="card-title">
-										<i class="fas fa-th mr-1"></i> select a session:
+										<i class="fas fa-th mr-1"></i> Sessions:
 									</h3>
 
 									<div class="card-tools">
@@ -287,14 +392,25 @@
 									</div>
 								</div>
 								<div class="card-body pt-0" id="sessions_widget">
-									<div style="width: 100%; height: 100%; overflow: auto;">
+										<div class="funny_scrollbar_green" style="width: 100%; max-height: 10rem; overflow: auto; display: flex; justify-content: center; flex-wrap: wrap; position: relative; text-align: center;">
+										
+									<!--<div style="width: 100%; height: 100%; overflow: auto;">-->
 										<table class="table" cellspacing="0" cellpadding="1"
 											width="100%" id="allSessionsTable">
 											<tbody>
-												<label></label>
 											</tbody>
 										</table>
 									</div>
+									<div class="funny_scrollbar_green" style="width: 100%; max-height: 10rem; overflow: auto; display: flex; justify-content: center; flex-wrap: wrap; position: relative; text-align: center;">
+										<label>ended sessions: </label>
+										<!--<div style="width: 100%; height: 100%; overflow: auto;">-->
+												<table class="table" cellspacing="0" cellpadding="1"
+													width="100%" id="endedSessionsTable">
+													<tbody>
+														
+													</tbody>
+												</table>
+											</div>
 								</div>
 								<!-- /.card-footer -->
 							</div>
@@ -326,14 +442,45 @@
 									<div id="mission" style="display: none;">
 										<label>actual points: </label>
 										<label id="user_actual_points"></label> 
+										
+										<div class="container">
+											<div class="row" style="border-color: black; border: 1px solid #dee2e6; 
+											border-radius: .25rem; box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);">
+												<div class="col-5">
+														<label style="margin: 2px; ">you have to kill</label>
+														<label style="margin: 2px; " id="user_target_name">prova</label>
+																	
+												</div>
+												<div class="col-7">
+														<img id="user_target_image"  style="width: 40%; margin: 4px; border-radius: 8px;" src="/campus_murder_web_server/SERVER_DATA/PROFILE_IMAGES/Folder3.jpg"></img>
+												</div>
+											</div>
 
+											<div class="row" style="border-color: black; border: 1px solid #dee2e6; 
+											border-radius: .25rem; box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);">
+												<div class="col-6">
+														<label style="margin: 2px; ">in </label>
+														<label style="margin: 2px; " id="actual_place_target"></label>
+														<label style="margin: 2px; " id="user_target_name">using</label>
+														<label style="margin: 2px; " id="actual_object_target"></label>		
+												</div>
+												<div class="col-3">
+														<img id="place_image" style="width: 100%; margin: 4px; border-radius: 8px;" src="/campus_murder_web_server/SERVER_DATA/PROFILE_IMAGES/Folder3.jpg"></img>
+												</div>
+												<div class="col-3">
+														<img id="object_image" style="width: 100%; margin: 4px; border-radius: 8px;"  src="/campus_murder_web_server/SERVER_DATA/PROFILE_IMAGES/Folder3.jpg"></img>
+												</div>
+											</div>
+
+										</div>
+										
+
+										<!--
 										<div style="width: 100%; border-color: black; border: 1px solid #dee2e6; 
 											border-radius: .25rem; box-shadow: 0 .5rem 1rem rgba(0,0,0,.15); max-height: 15rem; overflow: auto;
 											display: flex; justify-content: center; flex-wrap: wrap; position: relative; text-align: center;">
 										
-											<label style="line-height: 4.8rem; margin-right: 2px; ">target :</label>
-											<img id="user_target_image" class="image_bhestia" src="/campus_murder_web_server/SERVER_DATA/PROFILE_IMAGES/Folder3.jpg"></img>
-										</div>
+																					</div>
 										<div style="width: 100%; border-color: black; border: 1px solid #dee2e6; 
 											border-radius: .25rem; box-shadow: 0 .5rem 1rem rgba(0,0,0,.15); max-height: 15rem; overflow: auto;
 											display: flex; justify-content: center; flex-wrap: wrap; position: relative; text-align: center;">
@@ -341,6 +488,7 @@
 											<img id="place_image" class="image_bhestia" src="/campus_murder_web_server/SERVER_DATA/PROFILE_IMAGES/Folder3.jpg"></img>
 											<img id="object_image" class="image_bhestia"  src="/campus_murder_web_server/SERVER_DATA/PROFILE_IMAGES/Folder3.jpg"></img>
 										</div>
+									-->
 										<label style="float:right; margin-left: 2px;">points</label><label style="float:right;" id="actual_target_points"></label><label style="float:right; margin-right: 2px;">reward: </label>
 									</div>
 								</div>
@@ -356,46 +504,43 @@
 							class="col-lg-3 col-md-3 col-sm-6 connectedSortable">
 
 							<div class="card bg-gradient-danger">
-									<div class="card-header border-0">
-										<h3 class="card-title">
-											<i class="fas fa-th mr-1"></i> Kill declarations
-										</h3>
+								<div class="card-header border-0">
+									<h3 class="card-title">
+										<i class="fas fa-th mr-1"></i> Kill declarations
+									</h3>
 	
-										<div class="card-tools">
-											<button type="button" class="btn bg-danger btn-sm"
-												data-card-widget="collapse">
-												<i class="fas fa-minus"></i>
-											</button>
-											<button type="button" class="btn bg-danger btn-sm"
-												onclick="getMeKillList()">
-												<i class="fas fa-sync" aria-hidden="true"></i>
-											</button>
-										</div>
-									</div>
-	
-									<div class="card-body pt-0">
-										<div style="width: 100%; height: 100%; overflow: auto;">
-											<table class="table" cellspacing="0" cellpadding="1"
-												width="100%" id="pendingKillDeclarations">
-												<tbody>
-													<label></label>
-												</tbody>
-											</table>
-										</div>
-									</div>
-						
-									<div class="card-footer">
-										<button type="button" class="btn bg-danger" id="new object"
-											data-toggle="modal" data-target="#new_object_modal">new
-											object</button>
+									<div class="card-tools">
+										<button type="button" class="btn bg-danger btn-sm"
+											data-card-widget="collapse">
+											<i class="fas fa-minus"></i>
+										</button>
+										<button type="button" class="btn bg-danger btn-sm"
+											onclick="getMeKillList()">
+											<i class="fas fa-sync" aria-hidden="true"></i>
+										</button>
 									</div>
 								</div>
 	
+								<div class="card-body pt-0">
+									<div style="width: 100%; height: 100%; overflow: auto;">
+										<table class="table" cellspacing="0" cellpadding="1"
+											width="100%" id="pendingKillDeclarations">
+											<tbody>
+												<label></label>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</section>
+
+						<section id="fourth_column"
+							class="col-lg-3 col-md-3 col-sm-6 connectedSortable">
 
 							<div class="card bg-gradient-warning">
 								<div class="card-header border-0">
 									<h3 class="card-title">
-										<i class="fas fa-th mr-1"></i> Places
+										<i class="fas fa-th mr-1"></i> Highlights
 									</h3>
 
 									<div class="card-tools">
@@ -413,6 +558,12 @@
 
 									<div class="funny_scrollbar_yellow" id="place_images"
 										style="width: 100%; max-height: 11rem; overflow: auto; display: flex; justify-content: center; flex-wrap: wrap; position: relative; text-align: center;">
+										<table class="table" cellspacing="0" cellpadding="1"
+											width="100%" id="highlightsTable">
+											<tbody>
+												<label></label>
+											</tbody>
+										</table>
 									</div>
 
 								</div>
@@ -420,63 +571,6 @@
 									<button type="button" class="btn bg-warning"
 										data-toggle="modal" data-target="#new_place_modal">new
 										place</button>
-								</div>
-							</div>
-
-							<div class="card bg-gradient-warning">
-								<div class="card-header border-0">
-									<h3 class="card-title">
-										<i class="fas fa-th mr-1"></i>Session Places
-									</h3>
-
-									<div class="card-tools">
-										<button type="button" class="btn bg-warning btn-sm"
-											data-card-widget="collapse">
-											<i class="fas fa-minus"></i>
-										</button>
-										<button type="button" class="btn bg-warning btn-sm"
-											onclick="retriveSessionPlaces()">
-											<i class="fa fa-sync" aria-hidden="true"></i>
-										</button>
-									</div>
-								</div>
-								<div class="card-body">
-
-									<div class="funny_scrollbar_yellow" id="session_places_images"
-										style="width: 100%; max-height: 11rem; overflow: auto; display: flex; justify-content: center; flex-wrap: wrap; position: relative; text-align: center;">
-									</div>
-
-								</div>
-							</div>
-						</section>
-
-						<section id="fourth_column"
-							class="col-lg-3 col-md-3 col-sm-6 connectedSortable">
-
-							<div class="card bg-gradient-danger">
-								<div class="card-header border-0">
-									<h3 class="card-title">
-										<i class="fas fa-th mr-1"></i>Session Objects
-									</h3>
-
-									<div class="card-tools">
-										<button type="button" class="btn bg-danger btn-sm"
-											data-card-widget="collapse">
-											<i class="fas fa-minus"></i>
-										</button>
-										<button type="button" class="btn bg-danger btn-sm"
-											onclick="retriveSessionObjects()">
-											<i class="fa fa-sync" aria-hidden="true"></i>
-										</button>
-									</div>
-								</div>
-
-								<div class="card-body">
-
-									<div class="funny_scrollbar_red" id="session_object_images"
-										style="width: 100%; max-height: 11rem; overflow: auto; display: flex; justify-content: center; flex-wrap: wrap; position: relative; text-align: center;">
-									</div>
-
 								</div>
 							</div>
 						</section>
