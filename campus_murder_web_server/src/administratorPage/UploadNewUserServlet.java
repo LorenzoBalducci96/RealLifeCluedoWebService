@@ -5,6 +5,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -30,8 +33,8 @@ public class UploadNewUserServlet extends HttpServlet {
 	private int maxFileSize = 6400000 * 1024;
 	private int maxMemSize = 128000 * 1024;
 	private String profileBasePath; //will be C:\Users\Jack\other...
-	private static String internetServerPath = "/campus_murder_web_server/SERVER_DATA/PROFILE_IMAGES";
-	private static String servletBaseProfilePath = "/SERVER_DATA/PROFILE_IMAGES";
+	private static String internetServerPath = "/SERVER_DATA/PROFILE_IMAGES";
+
 	DiskFileItemFactory factory = null;
 	ServletFileUpload upload = null;
 
@@ -47,7 +50,9 @@ public class UploadNewUserServlet extends HttpServlet {
 		upload.setSizeMax(maxFileSize);
 
 		// Get the file location where it would be stored.
-		profileBasePath = getServletContext().getRealPath(servletBaseProfilePath);
+		profileBasePath = getServletConfig().getInitParameter("user-folder");
+		
+		internetServerPath = getServletConfig().getInitParameter("internet-place-path");
 		
 		System.out.println("servlet configured for receiving users on " + profileBasePath);
 	}
@@ -82,9 +87,12 @@ public class UploadNewUserServlet extends HttpServlet {
 						fileName = username + fi.getName().substring(fi.getName().lastIndexOf('.'));
 						
 						if (fieldName.equals("profile_image")) {
-							File file = new File(profileBasePath + "/" + fileName);
-							iamgePath = profileBasePath + "/" + fileName;
+							File file = new File(profileBasePath + fileName);
 							if(!file.exists()) {
+								file.createNewFile();
+								fi.write(file);
+							}else {
+								file.delete();
 								file.createNewFile();
 								fi.write(file);
 							}
@@ -93,7 +101,7 @@ public class UploadNewUserServlet extends HttpServlet {
 				}
 				String password_hash = HashUtility.getInstance().encodeToSha512(password);
 				JSONObject jsonObject = DBConnect.getInstance()
-						.registerNewUser(username, internetServerPath + "/" + fileName, password_hash);
+						.registerNewUser(username, internetServerPath + fileName, password_hash);
 				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), "UTF-8"));
 				writer.write(jsonObject.toString());
 				writer.flush();

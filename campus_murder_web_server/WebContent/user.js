@@ -12,39 +12,179 @@ var object_target = "";
 var place_target = "";
 
 window.onload = function() {
-	$("#loginModal").modal();
-};
+	var xhr = new XMLHttpRequest();
+	var url = "getUserData";
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-Type", "application/json");
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState === 4 && xhr.status === 200) {
+			jsonUserData = JSON.parse(xhr.responseText);
+			if (jsonUserData["status_code"] == 200){
+				//$("#loginModal").modal('hide');
+				var table = document.getElementById("allSessionsTable");
+				var endedSessionTable = document.getElementById("endedSessionsTable");
+				table.innerHTML = ""
+				var i = 0
+				while(jsonUserData["sessions"][i] != null){
+					var sessionEnded = jsonUserData["sessions"][i]["session_ended"];
+					if(sessionEnded == "no"){
+						var date_start = new Date(jsonUserData["sessions"][i]["start"]);
+						var date_end = new Date(jsonUserData["sessions"][i]["end"]);
+						var date = new Date();
+						var now = date.getTime();
 
-function sendRegistrationRequest(){
-	var profile_image = document.getElementById("new_user_profile_image").files[0];
-	var formdata = new FormData();
-	var password = document.getElementById("new_user_password").value
-	var confirmedPassword =  document.getElementById("new_user_confirm_password").value
-	if(password == confirmedPassword){
-		formdata.append("profile_image", profile_image);
-		formdata.append("username", document.getElementById("new_user_username").value);
-		formdata.append("password", document.getElementById("new_user_password").value);
-		formdata.append("email", document.getElementById("new_user_email").value);
-		
-		var ajax = new XMLHttpRequest();
-		ajax.open("POST", "registrationRequest");
-		
-		ajax.onreadystatechange = function() {
-			if (ajax.readyState === 4 && ajax.status === 200) {
-				serverResponse = JSON.parse(ajax.responseText);
-				if (serverResponse["status_code"] == 200){
-					alert("inserted registration request...check your email for verify the account")
+						var session_duration = date_end.getTime() - date_start.getTime();
+						var past = now - date_start.getTime();
+						var percentual = Math.trunc((past / session_duration) * 100);
+
+						var row = table.insertRow(0);
+						row.setAttribute("session_name", jsonUserData["sessions"][i]["session_name"]);
+						row.setAttribute("start", jsonUserData["sessions"][i]["start"]);
+						row.setAttribute("end", jsonUserData["sessions"][i]["end"]);
+						row.setAttribute("description", jsonUserData["sessions"][i]["description"]);
+						var createClickHandler = function(row) {
+							return function() {
+								$("#session_modal").modal();
+								selectedSession = row.getAttribute("session_name");
+								document.getElementById("opened_session_name").innerHTML = row.getAttribute("session_name");
+								document.getElementById("opened_session_start_date").innerHTML = row.getAttribute("start");
+								document.getElementById("opened_session_end_date").innerHTML = row.getAttribute("end");
+								document.getElementById("opened_session_description").innerHTML = row.getAttribute("description");
+							};
+						}
+						row.onclick = createClickHandler(row);
+						var session_name = row.insertCell(0);
+						var passed = row.insertCell(1)
+						passed.className = "floatRight";
+						session_name.innerHTML = "<div style=\"height: 60px; line-height: 60px;\"> <label>" + 
+							jsonUserData["sessions"][i]["session_name"] + "</label> </div>";
+						passed.innerHTML = "<div style=\"display: inline; width: 60px; height: 60px;\">\
+							<canvas width=\"60\" height=\"60\"\
+							style=\"width: 30px; height: 30px;\"></canvas>\
+							<input type=\"text\" class=\"knob\" data-readonly=\"true\"\
+							value=\"" + percentual + "\" data-width=\"60\" data-height=\"60\"\
+							data-fgcolor=\"#ffffffff\" data-bgcolor=\"#39CCCCaa\" readonly=\"readonly\">\</div>";
+						$('.knob').knob();
+					}else{
+						var row = endedSessionTable.insertRow(0);
+						row.setAttribute("session_name", jsonUserData["sessions"][i]["session_name"]);
+						row.setAttribute("start", jsonUserData["sessions"][i]["start"]);
+						row.setAttribute("end", jsonUserData["sessions"][i]["end"]);
+						row.setAttribute("description", jsonUserData["sessions"][i]["description"]);
+						var endedSession_name = row.insertCell(0);
+						endedSession_name.innerHTML = "<div style=\"height: 30px; line-height: 30px;\"> <label>" + 
+							jsonUserData["sessions"][i]["session_name"] + "</label> </div>";
+						var createClickHandler = function(row) {
+							return function() {
+								$("#ended_session_modal").modal();
+								selectedEndedSession = row.getAttribute("session_name");
+								document.getElementById("ended_session_name").innerHTML = row.getAttribute("session_name");
+								document.getElementById("ended_session_start_date").innerHTML = row.getAttribute("start");
+								document.getElementById("ended_session_end_date").innerHTML = row.getAttribute("end");
+								document.getElementById("ended_session_description").innerHTML = row.getAttribute("description");
+								document.getElementById("endedSessionHighlightsTable").innerHTML = "";
+								requesthighlightsOfClosedSession();
+							};
+						}
+						row.onclick = createClickHandler(row);
+					}
+					i++;
 				}
-				else{
-					alert("error: already sent registration request?");
-				}
+				selectedSession = jsonUserData["sessions"][0]["session_name"];
+				loginToThisSession();
+			}
+			else{
+				$("#loginModal").modal();
 			}
 		}
-		ajax.send(formdata);
-	}else{
-		alert("not same password on confirm password label")
-	}
-}
+	};
+	var data = JSON
+	.stringify({
+	});
+	xhr.send(data);
+};
+
+$('#registration_modal').on('shown.bs.modal', function () {
+	var input = document.getElementById('new_user_profile_image');
+	var image = document.getElementById('image_to_crop');
+	var cropper;
+
+	input.addEventListener('change', function (e) {
+        var files = e.target.files;
+        var done = function (url) {
+          	input.value = '';
+		  	image.src = url;
+		  	//my code
+		  	cropper = new Cropper(image, {
+				aspectRatio: 1,
+				viewMode: 3,
+		  	});
+        };
+        var reader;
+        var file;
+        var url;
+
+        if (files && files.length > 0) {
+			file = files[0];
+
+			if (URL) {
+				done(URL.createObjectURL(file));
+			} else if (FileReader) {
+				reader = new FileReader();
+				reader.onload = function (e) {
+				done(reader.result);
+				};
+				reader.readAsDataURL(file);
+			}
+        }
+	});
+	  
+	document.getElementById('register_button').addEventListener('click', function () {
+		//var initialAvatarURL;
+		var canvas;
+
+        if (cropper) {
+			canvas = cropper.getCroppedCanvas({
+				width: 160,
+				height: 160,
+			});
+			//initialAvatarURL = avatar.src;
+			//avatar.src = canvas.toDataURL();
+			canvas.toBlob(function (blob) {
+
+				var formdata = new FormData();
+				var password = document.getElementById("new_user_password").value
+				var confirmedPassword =  document.getElementById("new_user_confirm_password").value
+				if(password == confirmedPassword){
+					
+					formdata.append('profile_image', blob, 'imageUploaded.jpg');
+					formdata.append("username", document.getElementById("new_user_username").value);
+					formdata.append("password", document.getElementById("new_user_password").value);
+					formdata.append("email", document.getElementById("new_user_email").value);
+					
+					var ajax = new XMLHttpRequest();
+					ajax.open("POST", "registrationRequest");
+					
+					ajax.onreadystatechange = function() {
+						if (ajax.readyState === 4 && ajax.status === 200) {
+							serverResponse = JSON.parse(ajax.responseText);
+							if (serverResponse["status_code"] == 200){
+								//alert("inserted registration request...check your email for verify the account")
+							}
+							else{
+								alert("error on sending registration request");
+							}
+						}
+					}
+					ajax.send(formdata);
+					alert("sent registration request...check your email for complete the registration");
+				}else{
+					alert("not same password on confirm password label")
+				}
+			});
+		}
+	});
+})
 
 function login() {
 	var xhr = new XMLHttpRequest();
@@ -143,6 +283,62 @@ function login() {
 	xhr.send(data);
 }
 
+function logout(){
+	var xhr = new XMLHttpRequest();
+	var url = "logout";
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-Type", "application/json");
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState === 4 && xhr.status === 200) {
+			jsonResponse = JSON.parse(xhr.responseText);
+			if (jsonResponse["status_code"] == 200){
+				location.reload();
+			}else{
+				alert("errore inatteso, logout non effettuato")
+			} 
+		}
+	}
+	var data = JSON
+	.stringify({
+	});
+	xhr.send(data);
+}
+
+function updateUserData(){
+	var xhr = new XMLHttpRequest();
+	var url = "getUserMission";
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-Type", "application/json");
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState === 4 && xhr.status === 200) {
+			jsonResponse = JSON.parse(xhr.responseText);
+			if (jsonResponse["status_code"] == 200){
+				var i = 0;
+				while(jsonUserData["sessions"][i]["session_name"] != selectedSession){
+					alert("not session " + jsonUserData["sessions"][i]["session_name"])
+					i++;
+				}	
+				jsonUserData["sessions"][i]["user_target_image"] = jsonResponse["user_target_image"]
+				jsonUserData["sessions"][i]["actual_user_target"] = jsonResponse["actual_user_target"]
+				jsonUserData["sessions"][i]["actual_place_target"] = jsonResponse["actual_place_target"]
+				jsonUserData["sessions"][i]["actual_object_target"] = jsonResponse["actual_object_target"]
+				jsonUserData["sessions"][i]["place_image"] = jsonResponse["place_image"]
+				jsonUserData["sessions"][i]["object_image"] = jsonResponse["object_image"]
+				jsonUserData["sessions"][i]["object_multiplicator"] = jsonResponse["object_multiplicator"]
+				jsonUserData["sessions"][i]["place_multiplicator"] = jsonResponse["place_multiplicator"]
+				jsonUserData["sessions"][i]["place_description"] = jsonResponse["place_description"]
+				jsonUserData["sessions"][i]["object_description"] = jsonResponse["object_description"]
+				loginToThisSession()
+			}
+		}
+	}
+	var data = JSON
+	.stringify({
+		"session" : selectedSession
+	});
+	xhr.send(data);
+}
+
 function loginToThisSession(){
 	var i = 0;
 	while(jsonUserData["sessions"][i]["session_name"] != selectedSession){
@@ -151,14 +347,30 @@ function loginToThisSession(){
 	}
 	//$('#sessions_card').CardWidget('remove')
 	document.getElementById("user_target_image").src = jsonUserData["sessions"][i]["user_target_image"];
+	document.getElementById("user_target_image").onclick = function(){
+		document.getElementById("showSpecImg").src = jsonUserData["sessions"][i]["user_target_image"]
+		document.getElementById("showSpecTitle").innerHTML = jsonUserData["sessions"][i]["actual_user_target"]
+		document.getElementById("showSpecDescription").innerHTML = ""
+		$("#modalShowSpec").modal();
+	}
 	document.getElementById("user_target_name").innerHTML = jsonUserData["sessions"][i]["actual_user_target"];
 	document.getElementById("actual_place_target").innerHTML = jsonUserData["sessions"][i]["actual_place_target"];
 	document.getElementById("actual_object_target").innerHTML = jsonUserData["sessions"][i]["actual_object_target"];
 	
-	
-	
 	document.getElementById("place_image").src = jsonUserData["sessions"][i]["place_image"];
+	document.getElementById("place_image").onclick = function(){
+		document.getElementById("showSpecImg").src = jsonUserData["sessions"][i]["place_image"]
+		document.getElementById("showSpecTitle").innerHTML = jsonUserData["sessions"][i]["actual_place_target"]
+		document.getElementById("showSpecDescription").innerHTML = jsonUserData["sessions"][i]["place_description"];
+		$("#modalShowSpec").modal();
+	};
 	document.getElementById("object_image").src = jsonUserData["sessions"][i]["object_image"];
+	document.getElementById("object_image").onclick = function(){
+		document.getElementById("showSpecImg").src = jsonUserData["sessions"][i]["object_image"]
+		document.getElementById("showSpecTitle").innerHTML = jsonUserData["sessions"][i]["actual_object_target"]
+		document.getElementById("showSpecDescription").innerHTML = jsonUserData["sessions"][i]["object_description"];
+		$("#modalShowSpec").modal();
+	}
 	document.getElementById("user_actual_points").innerHTML = jsonUserData["sessions"][i]["points"];
 	document.getElementById("actual_target_points").innerHTML = 100 * jsonUserData["sessions"][i]["object_multiplicator"] * jsonUserData["sessions"][i]["place_multiplicator"]
 	document.getElementById("mission").style.display = "block";

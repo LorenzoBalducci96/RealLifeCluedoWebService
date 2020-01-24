@@ -25,6 +25,7 @@
 <link rel="stylesheet" href="dist/css/images_bhestia.css">
 <link rel="stylesheet" href="dist/css/scrollbars.css">
 <link rel="stylesheet" href="dist/css/general.css">
+<link rel="stylesheet" href="dist/css/cropper.css">
 <!-- overlayScrollbars -->
 <link rel="stylesheet"
 	href="plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
@@ -36,6 +37,26 @@
 
 
 </head>
+
+<div class="modal fade" id="modalShowSpec" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog" role="dialog">
+		<div class="modal-content" >
+				<div class="modal-header">
+					<h5 class="modal-title" id="showSpecTitle"></h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+				</div>
+				<div class="modal-body p-4">
+					<img id="showSpecImg" style="width: 100%; border-radius: 8px;"></img>
+				</div>
+				<div class="modal-footer">
+					<h5 id="showSpecDescription"></h5>
+				</div>
+		</div>
+	</div>
+</div>
+
 <body style="background-color: black;" class="hold-transition sidebar-mini layout-fixed" >
 	<div class="modal fade" id="loginModal" tabindex="-1" role="dialog"
 		data-backdrop="static" data-keyboard="false"
@@ -88,14 +109,14 @@
 							</div>
 						</div>
 					</div>
-					<h6 style="text-align: center; width: 100%;">username (will be used for login and shown in highlights)</h6>
+					<h6 style="text-align: center; width: 100%;">username (use something understandable by other players)</h6>
 					
 					<div class="row">
 						<div class="col-2" style="text-align: right;"></div>
 						<div class="col-8">
 							<div class="form-group">			
 								<input id="new_user_username" class="form-control" type="text"
-									name="new_user_username" placeholder="the_best999">
+									name="new_user_username" placeholder="mario_rossi">
 							</div>
 						</div>
 					</div>
@@ -114,12 +135,15 @@
 								<label class="custom-file-label"
 									style="height: auto !important;" for="new_user_profile_image">Choose profile image</label>
 							</div>
+							<div class="img-container">
+								<img id="image_to_crop" style="width: 100%;" src="">
+							</div>
 						</div>
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button class="btn bg-info btn-sm" style="width: 100%;"
-						onclick="sendRegistrationRequest()" data-dismiss="modal">register</button>
+					<button class="btn bg-info btn-sm" style="width: 100%;" id="register_button"
+						 data-dismiss="modal">register</button>
 					<button class="btn bg-success btn-sm" style="width: 100%;"
 						data-dismiss="modal">Close</button>
 				</div>
@@ -361,6 +385,7 @@
 				
 			</ul>
 			<ul class="navbar-nav ml-auto">
+					<button type="button" onclick="logout()" class="btn bg-info btn-sm">logout</button>
 			</ul>
 		</nav>
 
@@ -426,15 +451,18 @@
 										<i class="fas fa-th mr-1"></i> Your mission
 									</h3>
 
+
 									<div class="card-tools">
 										<button type="button" class="btn bg-success btn-sm"
 											data-card-widget="collapse">
 											<i class="fas fa-minus"></i>
 										</button>
+										
 										<button type="button" class="btn bg-success btn-sm"
-											onclick="alert('not implemented update mission')">
+											onclick="updateUserData()">
 											<i class="fa fa-sync" aria-hidden="true"></i>
 										</button>
+									
 									</div>
 								</div>
 								<div class="card-body">
@@ -461,7 +489,7 @@
 												<div class="col-6">
 														<label style="margin: 2px; ">in </label>
 														<label style="margin: 2px; " id="actual_place_target"></label>
-														<label style="margin: 2px; " id="user_target_name">using</label>
+														<label style="margin: 2px; ">using</label>
 														<label style="margin: 2px; " id="actual_object_target"></label>		
 												</div>
 												<div class="col-3">
@@ -549,7 +577,7 @@
 											<i class="fas fa-minus"></i>
 										</button>
 										<button type="button" class="btn bg-warning btn-sm"
-											onclick="retrivePlaces()">
+											onclick="requesthighlights()">
 											<i class="fa fa-sync" aria-hidden="true"></i>
 										</button>
 									</div>
@@ -568,9 +596,7 @@
 
 								</div>
 								<div class="card-footer">
-									<button type="button" class="btn bg-warning"
-										data-toggle="modal" data-target="#new_place_modal">new
-										place</button>
+									
 								</div>
 							</div>
 						</section>
@@ -620,6 +646,8 @@
 
 	<!-- resizable bootstrap column -->
 	<script src="dist/js/dimensionScripts.js"></script>
+
+	<script src="dist/js/cropper.js"></script>
 
 
 	<!-- handling slider changes -->

@@ -1,3 +1,4 @@
 .metadata/
-.campus_murder_web_server/WebContent/WEB-INF/web.xml
-.campus_murder_web_server/WebContent/WEB-INF/webLocal.xml
+campus_murder_web_server/WebContent/WEB-INF/web.xml
+campus_murder_web_server/WebContent/WEB-INF/webLocal.xml
+campus_murder_web_server/WebContent/WEB-INF/webRemote.xml

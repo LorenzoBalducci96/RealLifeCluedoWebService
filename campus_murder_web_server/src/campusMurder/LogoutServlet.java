@@ -18,7 +18,7 @@ import com.mysql.cj.xdevapi.JsonArray;
 import utils.DBConnect;
 
 
-public class ConfirmKillOnCodeServlet extends HttpServlet {
+public class LogoutServlet extends HttpServlet {
 
 	public void init( ){
 
@@ -26,14 +26,28 @@ public class ConfirmKillOnCodeServlet extends HttpServlet {
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, java.io.IOException {
+		System.out.println("received user logout");
+
+		HttpSession session=request.getSession();
+		session.invalidate();
+
+		
+		//response.sendRedirect("http://localhost:8080/campus_murder_web_server/");
+		
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), "UTF-8"));
+		writer.write(new JSONObject().accumulate("status_code", 200).toString());
+		writer.flush();
+		writer.close();
 		
 	}
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, java.io.IOException {
-		String confirmation_code = request.getParameter("confirmation_code");  
-		DBConnect.getInstance().confirmKillWithCode(confirmation_code);
-		response.sendRedirect("confirmed_kill.html");
+		System.out.println("received get");
+
+		throw new ServletException("GET method used with " +
+				getClass( ).getName( )+": POST method required.");
+
 	}
 
 

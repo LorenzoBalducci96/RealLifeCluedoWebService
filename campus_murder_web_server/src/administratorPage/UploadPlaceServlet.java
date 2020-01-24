@@ -5,6 +5,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -28,9 +31,9 @@ public class UploadPlaceServlet extends HttpServlet {
 	
 	private int maxFileSize = 6400000 * 1024;
 	private int maxMemSize = 128000 * 1024;
+	
 	private String placeBasePath; //will be C:\Users\Jack\other...
-	private static String internetServerPath = "/campus_murder_web_server/SERVER_DATA/PLACES_IMAGES";
-	private static String servletBaseObjectsPath = "/SERVER_DATA/PLACES_IMAGES";
+	private static String internetServerPath = "/SERVER_DATA/PLACES_IMAGES";
 	DiskFileItemFactory factory = null;
 	ServletFileUpload upload = null;
 
@@ -44,9 +47,11 @@ public class UploadPlaceServlet extends HttpServlet {
 		upload = new ServletFileUpload(factory);
 		// max size upload
 		upload.setSizeMax(maxFileSize);
-
+		
 		// Get the file location where it would be stored.
-		placeBasePath = getServletContext().getRealPath(servletBaseObjectsPath);
+		placeBasePath = getServletConfig().getInitParameter("place-folder");
+		
+		internetServerPath = getServletConfig().getInitParameter("internet-place-path");
 		
 		System.out.println("servlet configured for receiving places on " + placeBasePath);
 	}
@@ -81,19 +86,23 @@ public class UploadPlaceServlet extends HttpServlet {
 				for(FileItem fi : fileItems) {
 					if (!fi.isFormField()) {
 						String fieldName = fi.getFieldName();
-						fileName = fi.getName();
+						fileName = placeName + fi.getName().substring(fi.getName().lastIndexOf('.'));
 						
 						if (fieldName.equals("place_image")) {
-							File file = new File(placeBasePath + "/" + fileName);
-							placePath = placeBasePath + "/" + fileName;
-							if(!file.exists())
+							File file = new File(placeBasePath + fileName);
+							if(!file.exists()) {
 								file.createNewFile();
-							fi.write(file);
+								fi.write(file);
+							}else {
+								file.delete();
+								file.createNewFile();
+								fi.write(file);
+							}
 						}
 					}
 				}
 				JSONObject jsonObject = DBConnect.getInstance()
-						.addPlace(placeName, internetServerPath + "/" + fileName, multiplicator, description);
+						.addPlace(placeName, internetServerPath + fileName, multiplicator, description);
 				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), "UTF-8"));
 				writer.write(jsonObject.toString());
 				writer.flush();

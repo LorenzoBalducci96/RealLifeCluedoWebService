@@ -18,7 +18,7 @@ import com.mysql.cj.xdevapi.JsonArray;
 import utils.DBConnect;
 
 
-public class GetPendingKillServlet extends HttpServlet {
+public class GetUserDataServlet extends HttpServlet {
 
    public void init( ){
 	   
@@ -26,7 +26,8 @@ public class GetPendingKillServlet extends HttpServlet {
    
    public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, java.io.IOException {
-	   System.out.println("received get pending kill kill");
+	   System.out.println("received get user data");
+	   
 	   boolean logged = false;
 	   Enumeration<String> attributes = request.getSession().getAttributeNames();
 	   while(attributes.hasMoreElements()) {
@@ -36,7 +37,7 @@ public class GetPendingKillServlet extends HttpServlet {
 		   }
 	   }
 	   if(!logged) {
-			System.out.println("WARNING: UNLOGGED GET PENDING KILL (NEW CONNECTION)");
+			System.out.println("WARNING: UNLOGGED REQUEST USER DATA (NEW CONNECTION)");
 			JSONObject jsonObject = new JSONObject().accumulate("status_code", 401);
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), "UTF-8"));
 		    writer.write(jsonObject.toString());
@@ -54,16 +55,14 @@ public class GetPendingKillServlet extends HttpServlet {
 		   JSONObject jobj = new JSONObject(sb.toString());
 		   
 		   String username = (String) request.getSession().getAttribute("username");
-		   String session = jobj.getString("session");
 		   
-		   JSONObject jsonObject = DBConnect.getInstance().getPendingKill(username, session);
+		   JSONObject jsonObject = DBConnect.getInstance().getUserData(username);
 		   
 		   BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), "UTF-8"));
 	       writer.write(jsonObject.toString());
 	       writer.flush();
 	       writer.close();
 		}
-		   
    }
       
       public void doGet(HttpServletRequest request, HttpServletResponse response)

@@ -49,6 +49,7 @@ public class DBConnect {
 	private PreparedStatement denyBeingKilled;
 	private PreparedStatement removePendingKill;
 	private PreparedStatement increaseKillerPoints;
+	private PreparedStatement decreaseKilledPoints;
 
 
 	private PreparedStatement getReport;
@@ -70,7 +71,11 @@ public class DBConnect {
 	private PreparedStatement createSession;
 	private PreparedStatement registerUser;
 	private PreparedStatement deleteSession;
+	private PreparedStatement deleteWaitingConfirmationKills;
+	private PreparedStatement deleteKills;
+	private PreparedStatement deleteRejectedKills;
 	private PreparedStatement getAllUsers;
+	private PreparedStatement getUserMission;
 	private PreparedStatement addUserToSession;
 	private PreparedStatement removeUserFromSession;
 	private PreparedStatement getSessionUsersList;
@@ -96,6 +101,7 @@ public class DBConnect {
 
 			loginStatement = con.prepareStatement("select * from users where username=? and password_hash=?");
 			//retriveSessionsStatement = con.prepareStatement("select * from inscriptions where username=?");
+			
 			retriveUserSessionData = con.prepareStatement("select i.session_name session_name, i.points points, "
 					+ "s.start start, s.end end, s.description session_description, "
 					+ "i.actual_object_target actual_object_target, o.image object_image, o.description object_description, o.multiplicator object_multiplicator, "
@@ -129,6 +135,19 @@ public class DBConnect {
 					+ "(select o.multiplicator from objects o where o.object_name = actual_object_target) * "
 					+ "(select p.multiplicator from places p where p.place_name = actual_place_target) "
 					+ "where username=? and session_name=?");
+			decreaseKilledPoints = con.prepareStatement("update inscriptions set points = points - 50 "
+					+ "where username=? and session_name=?");
+			getUserMission = con.prepareStatement("select i.session_name session_name, i.points points, " + 
+					"s.start start, s.end end, s.description session_description, " + 
+					"i.actual_object_target actual_object_target, o.image object_image, o.description object_description, o.multiplicator object_multiplicator, " + 
+					"i.actual_place_target, p.image place_image, p.description place_description, p.multiplicator place_multiplicator, " + 
+					"i.actual_user_target, u.profile_image user_target_image " + 
+					"from inscriptions i " + 
+					"inner join sessions s on i.session_name = s.session_name " + 
+					"inner join objects o on i.actual_object_target = o.object_name " + 
+					"inner join places p on i.actual_place_target = p.place_name " + 
+					"inner join users u on i.actual_user_target = u.username " + 
+					"where i.username=? and i.session_name=?;");
 			getKillList = con.prepareStatement("select k.killer as killer, killer.profile_image as killer_profile_image, "
 					+ "k.killed as killed, killed.profile_image as killed_profile_image, "
 					+ "k.object as object, o.object_name as object_name, "
@@ -152,7 +171,12 @@ public class DBConnect {
 			addObject = con.prepareStatement("insert into objects set object_name=?, image=?, multiplicator=?, description=?");
 			getSessions = con.prepareStatement("select * from sessions");
 			createSession = con.prepareStatement("insert into sessions set session_name=?, description=?, start=?, end=?");
-			deleteSession = con.prepareStatement("delete from sessions where session_name=?");
+			
+			deleteWaitingConfirmationKills = con.prepareStatement("delete from waiting_confirmation_kills where session=?;");
+			deleteKills = con.prepareStatement("delete from kills where session=?;");
+			deleteRejectedKills = con.prepareStatement("delete from deniedKills where session=?;");
+			deleteSession = con.prepareStatement("delete from sessions where session_name=?;");
+			
 			deleteObject = con.prepareStatement("delete from objects where object_name=?");
 			getPlaceList = con.prepareStatement("select * from places");
 			getSessionPlaceList = con.prepareStatement("select * from places p inner join places_on_session s on p.place_name=s.place_name and s.session_name=?;");
@@ -192,10 +216,39 @@ public class DBConnect {
 					"old.actual_user_target = (select i.username from (select * from inscriptions) i where i.session_name=? and i.username<>old.username order by rand() limit 1) " + 
 					"where old.session_name=? and " +
 					"(old.actual_user_target is null or actual_object_target is null or actual_place_target is null);");
+			
+			
+			/*
+			 * select i.username as username, COALESCE((select count(actual_user_target)
+				from inscriptions
+				where actual_user_target=i.username
+				group by actual_user_target), 0) as count
+				from inscriptions i
+				order by count
+				limit 1
+			 * */
+			
+			/*
 			updateUserMission = con.prepareStatement("update inscriptions old set " + 
 					"old.actual_object_target = (select o.object_name from objects_on_session o where o.session_name=? order by rand() limit 1), " + 
 					"old.actual_place_target = (select p.place_name from places_on_session p where p.session_name=? order by rand() limit 1), " +
 					"old.actual_user_target = (select i.username from (select * from inscriptions) i where i.session_name=? and i.username<>old.username order by rand() limit 1) " +
+					"where old.session_name=? and old.username=?;");
+			*/
+			//session_name session_name username(killer) session_name username=(killer)
+			updateUserMission = con.prepareStatement("update inscriptions old set " + 
+					"old.actual_object_target = (select o.object_name from objects_on_session o where o.session_name=? order by rand() limit 1), " + 
+					"old.actual_place_target = (select p.place_name from places_on_session p where p.session_name=? order by rand() limit 1), " + 
+					"old.actual_user_target = (select subquery.username from( " + 
+					"select i.username as username, COALESCE((select count(actual_user_target) " + 
+					"	from inscriptions " + 
+					"	where actual_user_target=i.username " + 
+					"	group by actual_user_target), 0) as count " + 
+					"from inscriptions i " + 
+					"where username<>? " + 
+					"order by count " + 
+					"limit 1 " + 
+					") subquery) " + 
 					"where old.session_name=? and old.username=?;");
 			st = con.createStatement();
 
@@ -231,6 +284,53 @@ public class DBConnect {
 			e.printStackTrace();
 			return new JSONObject().accumulate("status_code", 500 );
 		}
+	}
+	
+	public JSONObject getUserData(String username) {
+		try {
+			ResultSet rs_sessions;
+			retriveUserSessionData.setString(1, username);
+			rs_sessions = retriveUserSessionData.executeQuery();
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.accumulate("status_code", 200);
+			jsonObject.accumulate("username", username);
+			
+			JSONArray jsonArray = new JSONArray();
+			while(rs_sessions.next()) {
+				JSONObject jsonObjectSession = new JSONObject();
+				jsonObjectSession.accumulate("session_name", rs_sessions.getString("session_name"));
+				jsonObjectSession.accumulate("session_description", rs_sessions.getString("session_description"));
+				jsonObjectSession.accumulate("points", rs_sessions.getString("points"));
+				jsonObjectSession.accumulate("start", rs_sessions.getString("start"));
+				jsonObjectSession.accumulate("end", rs_sessions.getString("end"));
+				if(LocalDateTime.parse(rs_sessions.getString("end"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")).isAfter(LocalDateTime.now())) {
+					jsonObjectSession.accumulate("session_ended", "no");
+					jsonObjectSession.accumulate("actual_object_target", rs_sessions.getString("actual_object_target"));
+					jsonObjectSession.accumulate("object_image", rs_sessions.getString("object_image"));		
+					jsonObjectSession.accumulate("object_description", rs_sessions.getString("object_description"));
+					jsonObjectSession.accumulate("object_multiplicator", rs_sessions.getFloat("object_multiplicator"));
+
+					jsonObjectSession.accumulate("actual_place_target", rs_sessions.getString("actual_place_target"));
+					jsonObjectSession.accumulate("place_image", rs_sessions.getString("place_image"));
+					jsonObjectSession.accumulate("place_description", rs_sessions.getString("place_description"));
+					jsonObjectSession.accumulate("place_multiplicator", rs_sessions.getFloat("place_multiplicator"));
+
+
+					jsonObjectSession.accumulate("actual_user_target", rs_sessions.getString("actual_user_target"));
+					jsonObjectSession.accumulate("user_target_image", rs_sessions.getString("user_target_image"));
+					jsonArray.put(jsonObjectSession);
+				}else {
+					jsonObjectSession.accumulate("session_ended", "yes");
+					jsonArray.put(jsonObjectSession);
+				}
+			}
+			jsonObject.put("sessions", jsonArray);
+			return jsonObject;
+		}catch(SQLException e) {
+			e.printStackTrace();
+			return new JSONObject().accumulate("status_code", 500 );
+		}
+		
 	}
 
 	public JSONObject autenticate(String username, String password) {
@@ -305,6 +405,8 @@ public class DBConnect {
 			removePendingKill.setString(3, session);
 			increaseKillerPoints.setString(1, killer);
 			increaseKillerPoints.setString(2,session);
+			decreaseKilledPoints.setString(1, killed);
+			decreaseKilledPoints.setString(2, session);
 
 			st.execute("start transaction");
 			if(confirmBeingKilled.executeUpdate() > 0) { //insert into kills...
@@ -312,25 +414,33 @@ public class DBConnect {
 					if(increaseKillerPoints.executeUpdate() > 0) { //update inscriptions set points...
 						updateUserMission.setString(1, session);
 						updateUserMission.setString(2, session);
-						updateUserMission.setString(3, session);
+						updateUserMission.setString(3, killer);
 						updateUserMission.setString(4, session);
 						updateUserMission.setString(5, killer);
 						if(updateUserMission.executeUpdate() > 0) {
-							st.execute("commit");
-							st.execute("set autocommit = true");
-							return new JSONObject().accumulate("status_code", 200 );
-						}
-
+							
+							//TODO cambio missione per lutente ucciso?
+							updateUserMission.setString(1, session);
+							updateUserMission.setString(2, session);
+							updateUserMission.setString(3, killed);
+							updateUserMission.setString(4, session);
+							updateUserMission.setString(5, killed);
+							if(updateUserMission.executeUpdate() > 0) {
+								st.execute("commit");
+								st.execute("set autocommit = true");
+								decreaseKilledPoints.executeUpdate();//not important if not succed
+								return new JSONObject().accumulate("status_code", 200 );
+							}else
+								st.execute("rollback");
+						}else
+							st.execute("rollback");
 					}
-					else {
+					else
 						st.execute("rollback");
-					}
-				}else {
+				}else
 					st.execute("rollback");
-				}
-			}else {
+			}else
 				st.execute("rollback");
-			}
 			return new JSONObject().accumulate("status_code", 401 );
 		}catch(SQLException e) {
 			e.printStackTrace();
@@ -545,10 +655,21 @@ public class DBConnect {
 
 	public JSONObject deleteSession(String session_name) {
 		try {
+			deleteKills.setString(1, session_name);
+			deleteWaitingConfirmationKills.setString(1, session_name);
+			deleteRejectedKills.setString(1, session_name);
 			deleteSession.setString(1, session_name);
+			//st.execute("start transaction");
+			
+			deleteKills.executeUpdate();
+			deleteWaitingConfirmationKills.executeUpdate();
+			deleteRejectedKills.executeUpdate();
 			if(deleteSession.executeUpdate() > 0) {
+				//st.execute("commit");
+				//st.execute("set autocommit = true");
 				return new JSONObject().accumulate("status_code", 200 );
 			}else {
+				//st.execute("rollback");
 				return new JSONObject().accumulate("status_code", 405 );
 			}
 		}catch(SQLException e) {
@@ -937,7 +1058,7 @@ public class DBConnect {
 
 			updateUserMission.setString(1, session);
 			updateUserMission.setString(2, session);
-			updateUserMission.setString(3, session);
+			updateUserMission.setString(3, killer);
 			updateUserMission.setString(4, session);
 			updateUserMission.setString(5, killer);
 
@@ -1012,6 +1133,37 @@ public class DBConnect {
 		}catch (SQLException e) {
 			e.printStackTrace();
 			return new JSONObject().accumulate("status_code", 500 );	
+		}
+	}
+
+	public JSONObject getUserMission(String username, String session) {
+		try {
+			ResultSet rs_session;
+			getUserMission.setString(1, username);
+			getUserMission.setString(2, session);
+			rs_session = getUserMission.executeQuery();
+
+			JSONObject jsonObjectSession = new JSONObject();
+			
+			if(rs_session.next()) {
+				jsonObjectSession.accumulate("actual_object_target", rs_session.getString("actual_object_target"));
+				jsonObjectSession.accumulate("object_image", rs_session.getString("object_image"));		
+				jsonObjectSession.accumulate("object_description", rs_session.getString("object_description"));
+				jsonObjectSession.accumulate("object_multiplicator", rs_session.getFloat("object_multiplicator"));
+
+				jsonObjectSession.accumulate("actual_place_target", rs_session.getString("actual_place_target"));
+				jsonObjectSession.accumulate("place_image", rs_session.getString("place_image"));
+				jsonObjectSession.accumulate("place_description", rs_session.getString("place_description"));
+				jsonObjectSession.accumulate("place_multiplicator", rs_session.getFloat("place_multiplicator"));
+
+				jsonObjectSession.accumulate("actual_user_target", rs_session.getString("actual_user_target"));
+				jsonObjectSession.accumulate("user_target_image", rs_session.getString("user_target_image"));
+
+			}
+			return jsonObjectSession.accumulate("status_code", 200);
+		} catch(SQLException e) {
+			e.printStackTrace();
+			return new JSONObject().accumulate("status_code", 500 );
 		}
 	}
 }

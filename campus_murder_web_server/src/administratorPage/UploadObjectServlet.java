@@ -5,6 +5,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -29,8 +32,10 @@ public class UploadObjectServlet extends HttpServlet {
 	private int maxFileSize = 6400000 * 1024;
 	private int maxMemSize = 128000 * 1024;
 	private String objectBasePath; //will be C:\Users\Jack\other...
-	private static String internetServerPath = "/campus_murder_web_server/SERVER_DATA/OBJECTS_IMAGES";
-	private static String servletBaseObjectsPath = "/SERVER_DATA/OBJECTS_IMAGES";
+	//private static String internetServerPath = "/SERVER_DATA/OBJECTS_IMAGES";
+	
+	
+	private static String internetServerPath = "/SERVER_DATA/OBJECTS_IMAGES";
 	DiskFileItemFactory factory = null;
 	ServletFileUpload upload = null;
 
@@ -46,7 +51,16 @@ public class UploadObjectServlet extends HttpServlet {
 		upload.setSizeMax(maxFileSize);
 
 		// Get the file location where it would be stored.
-		objectBasePath = getServletContext().getRealPath(servletBaseObjectsPath);
+		objectBasePath = getServletConfig().getInitParameter("object-folder");
+		/*
+		objectBasePath = getServletContext().getRealPath("/");
+		objectBasePath = objectBasePath.substring(0, objectBasePath.lastIndexOf(File.separator));
+		//objectBasePath = getServletContext().getRealPath("/").concat(".." + servletBaseObjectsPath);
+		objectBasePath = objectBasePath.substring(0, objectBasePath.lastIndexOf(File.separator)) 
+				+ File.separator + "SERVER_DATA" + File.separator + "OBJECTS_IMAGES";
+		*/
+		internetServerPath = getServletConfig().getInitParameter("internet-object-path");
+		
 		
 		System.out.println("servlet configured for receiving objects on " + objectBasePath);
 	}
@@ -81,19 +95,23 @@ public class UploadObjectServlet extends HttpServlet {
 				for(FileItem fi : fileItems) {
 					if (!fi.isFormField()) {
 						String fieldName = fi.getFieldName();
-						fileName = fi.getName();
+						fileName = objectName + fi.getName().substring(fi.getName().lastIndexOf('.'));
 						
 						if (fieldName.equals("object_image")) {
-							File file = new File(objectBasePath + "/" + fileName);
-							objectPath = objectBasePath + "/" + fileName;
-							if(!file.exists())
+							File file = new File(objectBasePath + fileName);
+							if(!file.exists()) {
 								file.createNewFile();
-							fi.write(file);
+								fi.write(file);
+							}else {
+								file.delete();
+								file.createNewFile();
+								fi.write(file);
+							}
 						}
 					}
 				}
 				JSONObject jsonObject = DBConnect.getInstance()
-						.addObject(objectName, internetServerPath + "/" + fileName, multiplicator, description);
+						.addObject(objectName, internetServerPath + fileName, multiplicator, description);
 				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), "UTF-8"));
 				writer.write(jsonObject.toString());
 				writer.flush();

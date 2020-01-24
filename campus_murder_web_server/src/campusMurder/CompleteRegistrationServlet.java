@@ -50,7 +50,7 @@ public class CompleteRegistrationServlet extends HttpServlet {
          throws ServletException, java.io.IOException {
     	  String register_code = request.getParameter("register_code");  
 			DBConnect.getInstance().completeRegistration(register_code);
-			response.getWriter().write("confermo avvenuta registrazione " + register_code);
+			response.sendRedirect("confirmed_registration.html");
 
       }
       
